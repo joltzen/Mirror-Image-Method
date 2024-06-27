@@ -7,8 +7,7 @@ mesh = trimesh.load_mesh('./model/simple_cube_normals_flipped.obj')
 
 FACE = 2
 
-normals = []
-for face in mesh.faces:
+def calculate_normal(face):
     v0 = mesh.vertices[face[0]]
     v1 = mesh.vertices[face[1]]
     v2 = mesh.vertices[face[2]]
@@ -17,29 +16,35 @@ for face in mesh.faces:
 
     normal = lin.cross(e0,e1)
     normal = normal / lin.vector_norm(normal)
-    normals.append(normal)
 
-normals = np.array(normals)
+    return normal    
 
 ps = np.array([0,0,0])
+print(ps)
 
 def mirror_source(source, face):
     #bestimmen von zentrum des Faces
     p = centroid_of_face(face)
 
+    normal = calculate_normal(face)
+
     #r berechnet
     r = p - source
 
     #Winkel zwischen r und normale des faces
-    alpha = angle_between_vectors(p, normals[FACE])
+    alpha = angle_between_vectors(p, normal)
 
     #spiegel punkt bestimmen
-    I =  (2*normals[FACE] * lin.norm(r) * np.cos(alpha)) - source
+    I =  (2*normal * lin.norm(r) * np.cos(alpha)) - source
 
     return I
 
 def centroid_of_face(face):
-    centroid = np.mean(face, axis=0)
+    v0 = mesh.vertices[face[0]]
+    v1 = mesh.vertices[face[1]]
+    v2 = mesh.vertices[face[2]]
+
+    centroid = np.mean([v0, v1,v2], axis=0)
     return centroid
 
 def angle_between_vectors(a, b):
@@ -62,9 +67,6 @@ def angle_between_vectors(a, b):
     
     return theta_rad
 
-normal1 = normals[FACE]
-
-
 x = mesh.vertices[:,0]
 y = mesh.vertices[:,1]
 z = mesh.vertices[:,2]
@@ -78,6 +80,7 @@ ax.set_box_aspect([1,1,1])
 # Zeichne die Punkte
 ax.scatter(x, y, z, c='black', marker='o')
 ax.scatter(ps[0],ps[1],ps[2], c='b')
+ax.scatter(0,0,0, c="black")
 
 
 for index, face in enumerate(mesh.faces):
@@ -93,6 +96,9 @@ for index, face in enumerate(mesh.faces):
     ax.plot([mesh.vertices[face[2], 0],mesh.vertices[face[0], 0]],
             [mesh.vertices[face[2], 1],mesh.vertices[face[0], 1]],
             [mesh.vertices[face[2], 2],mesh.vertices[face[0], 2]], c=color, alpha=0.1)
+    
+    mirrored_ps = mirror_source(ps, face)
+    #ax.scatter(mirrored_ps[0],mirrored_ps[1],mirrored_ps[2], c="pink")
 
 
     
@@ -103,15 +109,17 @@ for index, face in enumerate(mesh.faces):
         continue
     color = "red"
 
-    center = centroid_of_face([mesh.vertices[face[0]],mesh.vertices[face[1]],mesh.vertices[face[2]]])
+    center = centroid_of_face(face)
+    print(center)
     r = center - ps
+    print(r)
     #Verbindung Source zum Mittelpunkt des Dreiecks
-    ax.plot([r[0], ps[0]],[r[1], ps[1]],[r[2], ps[2]], c="green")
+    ax.plot([ps[0], r[0]],[ps[1], r[1]],[ps[2], r[2]], c="green")
 
-    alpha = angle_between_vectors(normals[FACE], r)
-    orthogonal = normals[FACE] * lin.norm(r) * np.cos(alpha)
+#    alpha = angle_between_vectors(normals[FACE], r)
+#    orthogonal = normals[FACE] * lin.norm(r) * np.cos(alpha)
 
-    ax.plot([orthogonal[0], ps[0]],[orthogonal[1], ps[1]],[orthogonal[2], ps[2]], c="yellow")
+    #ax.plot([orthogonal[0], ps[0]],[orthogonal[1], ps[1]],[orthogonal[2], ps[2]], c="yellow")
     ax.scatter(center[0],center[1],center[2], c="red")
 
     ax.plot([mesh.vertices[face[0], 0],mesh.vertices[face[1], 0]],
@@ -126,7 +134,7 @@ for index, face in enumerate(mesh.faces):
             [mesh.vertices[face[2], 1],mesh.vertices[face[0], 1]],
             [mesh.vertices[face[2], 2],mesh.vertices[face[0], 2]], c=color)
     
-    mirrored_ps = mirror_source(ps, [mesh.vertices[face[0]],mesh.vertices[face[1]],mesh.vertices[face[2]]])
+    mirrored_ps = mirror_source(ps, face)
 
     ax.scatter(mirrored_ps[0],mirrored_ps[1],mirrored_ps[2], c="black")
 
