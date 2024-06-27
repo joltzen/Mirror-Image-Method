@@ -1,69 +1,30 @@
 import numpy as np
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 
-# Beispiel Mesh-Daten
-class Mesh:
-    def __init__(self):
-        self.vertices = np.array([
-            [1.0, 1.0, -1.0],
-            [1.0, -1.0, -1.0],
-            [1.0, 1.0, 1.0],
-            [1.0, -1.0, 1.0],
-            [-1.0, 1.0, -1.0],
-            [-1.0, -1.0, -1.0],
-            [-1.0, 1.0, 1.0],
-            [-1.0, -1.0, 1.0]
-        ])
-        self.faces = np.array([
-            [0, 2, 6],
-            [0, 6, 4],
-            [1, 5, 7],
-            [1, 7, 3],
-            [0, 1, 3],
-            [0, 3, 2],
-            [4, 6, 7],
-            [4, 7, 5],
-            [0, 4, 5],
-            [0, 5, 1],
-            [2, 3, 7],
-            [2, 7, 6]
-        ])
-
-mesh = Mesh()
-FACE = 3  # Beispielwert für das Face, das grün eingefärbt werden soll
-
-# Erstelle einen 3D-Plot
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
-
-# Zeichne die Linien
-for index, face in enumerate(mesh.faces):
-    color = 'green' if index == FACE else 'blue'
-    print(f"Index: {index}, FACE: {FACE}, Color: {color}")
+def angle_between_vectors(a, b):
+    """
+    Berechnet den Winkel zwischen zwei Vektoren in Grad.
+    """
+    # Skalarprodukt der Vektoren
+    dot_product = np.dot(a, b)
     
-    ax.plot([mesh.vertices[face[0], 0], mesh.vertices[face[1], 0]],
-            [mesh.vertices[face[0], 1], mesh.vertices[face[1], 1]],
-            [mesh.vertices[face[0], 2], mesh.vertices[face[1], 2]], c=color)
+    # Längen der Vektoren
+    norm_a = np.linalg.norm(a)
+    norm_b = np.linalg.norm(b)
     
-    ax.plot([mesh.vertices[face[1], 0], mesh.vertices[face[2], 0]],
-            [mesh.vertices[face[1], 1], mesh.vertices[face[2], 1]],
-            [mesh.vertices[face[1], 2], mesh.vertices[face[2], 2]], c=color)
+    # Kosinus des Winkels
+    cos_theta = dot_product / (norm_a * norm_b)
+    
+    # Winkel in Radiant
+    theta_rad = np.arccos(np.clip(cos_theta, -1.0, 1.0))
+    
+    # Umwandeln in Grad
+    theta_deg = np.degrees(theta_rad)
+    
+    return theta_deg
 
-    ax.plot([mesh.vertices[face[2], 0], mesh.vertices[face[0], 0]],
-            [mesh.vertices[face[2], 1], mesh.vertices[face[0], 1]],
-            [mesh.vertices[face[2], 2], mesh.vertices[face[0], 2]], c=color)
+# Beispielvektoren
+vector_a = np.array([1, 0, 0])
+vector_b = np.array([0, 1, 0])
 
-# Optional: Beschrifte die Achsen
-ax.set_xlabel('X Achse')
-ax.set_ylabel('Y Achse')
-ax.set_zlabel('Z Achse')
-
-# Titel des Plots
-ax.set_title('3D Punkte Plot mit bedingten Linienfarben')
-
-# Zeige die Legende
-ax.legend()
-
-# Zeige den Plot
-plt.show()
+angle = angle_between_vectors(vector_a, vector_b)
+print("Winkel zwischen den Vektoren:", angle, "Grad")

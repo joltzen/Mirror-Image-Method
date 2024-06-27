@@ -23,13 +23,46 @@ normals = np.array(normals)
 
 ps = np.array([0,0,0])
 
-def mirror_source(source, normal):
-    return source - (2*np.dot(source, normal)*normal)
+def mirror_source(source, face):
+    #bestimmen von zentrum des Faces
+    p = centroid_of_face(face)
 
+    #r berechnet
+    r = p - source
+
+    #Winkel zwischen r und normale des faces
+    alpha = angle_between_vectors(p, normals[FACE])
+
+    #spiegel punkt bestimmen
+    I =  (2*normals[FACE] * lin.norm(r) * np.cos(alpha)) - source
+
+    return I
+
+def centroid_of_face(face):
+    centroid = np.mean(face, axis=0)
+    return centroid
+
+def angle_between_vectors(a, b):
+    """
+    Berechnet den Winkel zwischen zwei Vektoren in Grad.
+    """
+    # Skalarprodukt der Vektoren
+    dot_product = np.dot(a, b)
+    
+    # Längen der Vektoren
+    norm_a = np.linalg.norm(a)
+    norm_b = np.linalg.norm(b)
+    
+    # Kosinus des Winkels
+    cos_theta = dot_product / (norm_a * norm_b)
+    
+    # Winkel in Radiant
+    theta_rad = np.arccos(np.clip(cos_theta, -1.0, 1.0))
+    
+    
+    return theta_rad
 
 normal1 = normals[FACE]
-
-mirrored_ps = mirror_source(ps, normal1)
 
 
 x = mesh.vertices[:,0]
@@ -60,12 +93,26 @@ for index, face in enumerate(mesh.faces):
     ax.plot([mesh.vertices[face[2], 0],mesh.vertices[face[0], 0]],
             [mesh.vertices[face[2], 1],mesh.vertices[face[0], 1]],
             [mesh.vertices[face[2], 2],mesh.vertices[face[0], 2]], c=color, alpha=0.1)
+
+
+    
     
 for index, face in enumerate(mesh.faces):
-    
+
     if index != FACE:
         continue
     color = "red"
+
+    center = centroid_of_face([mesh.vertices[face[0]],mesh.vertices[face[1]],mesh.vertices[face[2]]])
+    r = center - ps
+    #Verbindung Source zum Mittelpunkt des Dreiecks
+    ax.plot([r[0], ps[0]],[r[1], ps[1]],[r[2], ps[2]], c="green")
+
+    alpha = angle_between_vectors(normals[FACE], r)
+    orthogonal = normals[FACE] * lin.norm(r) * np.cos(alpha)
+
+    ax.plot([orthogonal[0], ps[0]],[orthogonal[1], ps[1]],[orthogonal[2], ps[2]], c="yellow")
+    ax.scatter(center[0],center[1],center[2], c="red")
 
     ax.plot([mesh.vertices[face[0], 0],mesh.vertices[face[1], 0]],
             [mesh.vertices[face[0], 1],mesh.vertices[face[1], 1]],
@@ -78,6 +125,11 @@ for index, face in enumerate(mesh.faces):
     ax.plot([mesh.vertices[face[2], 0],mesh.vertices[face[0], 0]],
             [mesh.vertices[face[2], 1],mesh.vertices[face[0], 1]],
             [mesh.vertices[face[2], 2],mesh.vertices[face[0], 2]], c=color)
+    
+    mirrored_ps = mirror_source(ps, [mesh.vertices[face[0]],mesh.vertices[face[1]],mesh.vertices[face[2]]])
+
+    ax.scatter(mirrored_ps[0],mirrored_ps[1],mirrored_ps[2], c="black")
+
 
 
 # Optional: Beschrifte die Achsen
@@ -88,7 +140,6 @@ ax.set_zlabel('Z Achse')
 # Titel des Plots
 ax.set_title('3D Punkte Plot')
 # Zeige nur das Grid auf der XY-Ebene
-
 
 # Zeige den Plot
 plt.show()
