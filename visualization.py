@@ -6,7 +6,9 @@ import numpy as np
 
 
 class MeshVisualizer:
-    def __init__(self, mesh_handler, source_point, reflections_order, target_face):
+    def __init__(
+        self, mesh_handler, source_point, reflections_order, target_face, target
+    ):
         self.mesh_handler = mesh_handler
         self.source_point = source_point
         self.reflections_order = reflections_order
@@ -14,6 +16,7 @@ class MeshVisualizer:
         self.image_sources = mesh_handler.find_image_sources(
             source_point, reflections_order
         )
+        self.target = target
 
     def plot_mesh(self):
         fig = plt.figure()
@@ -28,6 +31,7 @@ class MeshVisualizer:
         ax.set_axis_off()
         plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
         ax.set_title("3D Points Plot")
+
         plt.show()
 
     def plot_vertices(self, ax):
@@ -107,6 +111,29 @@ class MeshVisualizer:
         first_order_reflection, test = self.mesh_handler.shootRay(
             np.add(locations[0], -0.0005), reflection_direction
         )
+
+        ax.scatter(
+            self.target[0],
+            self.target[1],
+            self.target[2],
+            color="magenta",
+            label="Target",
+        )
+
+        hit_location = locations[0]
+        if np.allclose(hit_location, self.target, atol=1e-2):
+            print("Target hit")
+        else:
+            print("Target miss")
+
+        # Wenn das Target beim ersten Ray nicht getroffen wird, dann wird die erste Reflexion geprüft
+        for face_index in index_triangle:
+            if len(first_order_reflection) > 0:
+                reflection_hit_location = first_order_reflection[0]
+                if np.allclose(reflection_hit_location, self.target, atol=1e-2):
+                    print("Target hit")
+                else:
+                    print("Target miss")
 
         ax.quiver(
             locations[0, 0],
