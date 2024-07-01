@@ -2,11 +2,13 @@ import trimesh
 import numpy as np
 import numpy.linalg as lin
 from Ray import Ray
-from collections import namedtuple
 
-class MeshHandler:
-    def __init__(self, file_path):
+class MirrorImageMethod:
+    def __init__(self, file_path, source, target, order):
         self.mesh = trimesh.load_mesh(file_path)
+        self.source = source
+        self.target = target
+        self.order = order
 
     def calculate_normal(self, face):
         v0, v1, v2 = self.mesh.vertices[face]
@@ -37,22 +39,30 @@ class MeshHandler:
             image_sources.extend(self.find_image_sources(mirrored_source, order, current_order + 1))
         return image_sources
 
-    def angle_between_vectors(self, a, b):
-        dot_product = np.dot(a, b)
-        norm_a = np.linalg.norm(a)
-        norm_b = np.linalg.norm(b)
-        cos_theta = dot_product / (norm_a * norm_b)
-        return np.arccos(np.clip(cos_theta, -1.0, 1.0))
     
     def shootRay(self, r_origin, r_direction):
         locations, index_ray, index_triangle = self.mesh.ray.intersects_location([r_origin], [r_direction])
-        print("Locations: ", locations)
-        print("index_ray: ", index_ray)
-        print("index_triangle: ", index_triangle)
-        return locations
+        return locations, index_triangle
     
+    
+    def calculatePaths(self):
+        
+        for index in range(self.order):
+            locations, index_triangle = self.shootRay(self.source, [0,1,0])
+
+            if(len(locations) > 0):
+                mirroredSource = self.mirror_source(index_triangle[0])
+
+                direction = locations[0] - mirroredSource
+
+                first_Order_reflection, _ = self.shootRay(locations[0], direction)
+
+
+
+        
+
     def singleRay(self, ray: Ray):
-        for face in self.mesh.faces:
+        for index, face in enumerate(self.mesh.faces):
             v0, v1, v2 = self.mesh.vertices[face]
             e0 = v1 - v0
             e1 = v2 - v0
@@ -83,7 +93,7 @@ class MeshHandler:
             intersection = ((1-result[1]-result[2])*v0)+result[1]*v1+result[2]*v2
 
 
-            return (intersection, face)
+            return (intersection, index)
         
         return -1, -1
 
