@@ -49,6 +49,13 @@ class MeshVisualizer:
             ax.scatter(mirrored_source[0], mirrored_source[1], mirrored_source[2], c="orange")
             ax.text(mirrored_source[0], mirrored_source[1], mirrored_source[2], 'I', color='orange')
 
+        direction = np.array([0.1, 0, 0.75])
+        locations = self.mesh_handler.shootRay(self.source_point, direction)
+        ax.quiver(ps[0], ps[1], ps[2], direction[0], direction[1], direction[2], color="green")
+        ax.scatter(locations[0,0], locations[0,1], locations[0,2],c="green")
+        
+        
+
         ax.set_axis_off()
         plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
         ax.set_title('3D Punkte Plot')
