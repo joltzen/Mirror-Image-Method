@@ -1,15 +1,15 @@
 import trimesh
 import numpy as np
 import numpy.linalg as lin
-from ray import Ray
+from utils import Ray, Target
 
 
 class MirrorImageMethod:
-    def __init__(self, file_path, source, target, order):
+    def __init__(self, file_path:str, source, target: Target, order: int):
         self.mesh = trimesh.load_mesh(file_path)
         self.source = source
-        self.target = target
         self.order = order
+        self.target = Target([0.5, 0.5, 0], 0.1)
 
     def calculate_normal(self, face):
         v0, v1, v2 = self.mesh.vertices[face]
@@ -95,3 +95,5 @@ class MirrorImageMethod:
             return (intersection, index)
 
         return -1, -1
+    
+        
