@@ -108,6 +108,11 @@ class MeshVisualizer:
         )
         ax.scatter(locations[0, 0], locations[0, 1], locations[0, 2], c="green")
 
+
+        for ray in Ray.generate_random_rays(10):
+            ax.quiver(self.source_point[0], self.source_point[1], self.source_point[2], ray[0], ray[1], ray[2], color="red")
+
+
         isHitted = self.target.isHittedByRay(Ray(self.source_point, direction), locations[0])
         print("Hits Ray Target?: ", isHitted)
         reflection_direction = locations[0] - mirrored_source
