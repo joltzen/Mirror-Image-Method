@@ -23,7 +23,7 @@ class Ray:
         return directions
     
     #Powered by ChatGPT
-    def generate_random_rays(n):
+    def generate_random_rays(origin, n):
         z = 2 * np.random.rand(n) - 1
         t = 2 * np.pi * np.random.rand(n)
         r = np.sqrt(1 - z**2)
@@ -32,7 +32,7 @@ class Ray:
         y = r * np.sin(t)
         
         directions = np.stack((x, y, z), axis=-1)
-        return directions
+        return [Ray(origin, direction) for direction in directions]
 
 class Target:
     def __init__(self, position, radius):

@@ -97,65 +97,43 @@ class MeshVisualizer:
     def plot_reflections(self, ax):
         """Plot the reflections of the mesh."""
         ps = self.source_point
-        direction = np.array([0.35, 0.5, 0.2])
-        locations, index_triangle = self.mesh_handler.shootRay(
-            self.source_point, direction
-        )
-        mirrored_source, order = self.image_sources[index_triangle[0]]
+        random_rays = Ray.generate_random_rays(ps, 10)
+        hit_target = False
 
-        ax.quiver(
-            ps[0], ps[1], ps[2], direction[0], direction[1], direction[2], color="blue"
-        )
-        ax.scatter(locations[0, 0], locations[0, 1], locations[0, 2], c="green")
+        for ray in random_rays:
+            locations, index_triangle = self.mesh_handler.shootRay(ray.origin, ray.direction)
+            mirrored_source, order = self.image_sources[index_triangle[0]]
+            if locations.shape[0] > 0:
+                hit_location = locations[0]
+                ax.quiver(ray.origin[0], ray.origin[1], ray.origin[2], ray.direction[0], ray.direction[1], ray.direction[2], color="blue")
+                ax.scatter(hit_location[0], hit_location[1], hit_location[2], c="orange")
 
+                is_hitted = self.target.isHittedByRay(ray, hit_location)
+                print(f"Ray {ray.direction} hits target? {is_hitted}")
 
-        for ray in Ray.generate_random_rays(10):
-            ax.quiver(self.source_point[0], self.source_point[1], self.source_point[2], ray[0], ray[1], ray[2], color="red")
-
-
-        isHitted = self.target.isHittedByRay(Ray(self.source_point, direction), locations[0])
-        print("Hits Ray Target?: ", isHitted)
-        reflection_direction = locations[0] - mirrored_source
-        first_order_reflection, test = self.mesh_handler.shootRay(
-            np.add(locations[0], -0.0005), reflection_direction
-        )
-
-        ax.scatter(
-            self.target.position[0],
-            self.target.position[1],
-            self.target.position[2],
-            color="magenta",
-            label="Target",
-        )
-
-        hit_location = locations[0]
-        if np.allclose(hit_location, self.target.position, atol=1e-2):
-            print("Target hit")
-        else:
-            print("Target miss")
-
-        # Wenn das Target beim ersten Ray nicht getroffen wird, dann wird die erste Reflexion geprüft
-        for face_index in index_triangle:
-            if len(first_order_reflection) > 0:
-                reflection_hit_location = first_order_reflection[0]
-                if np.allclose(reflection_hit_location, self.target.position, atol=1e-2):
+                if is_hitted:
+                    ax.scatter(self.target.position[0], self.target.position[1], self.target.position[2], color="magenta", label="Target")
                     print("Target hit")
+                    hit_target = True
+                    break
                 else:
                     print("Target miss")
+                    
+                    reflection_direction = hit_location - mirrored_source
+                    reflection_locations, _ = self.mesh_handler.shootRay(hit_location, reflection_direction)
 
-        ax.quiver(
-            locations[0, 0],
-            locations[0, 1],
-            locations[0, 2],
-            reflection_direction[0],
-            reflection_direction[1],
-            reflection_direction[2],
-            color="green",
-        )
-        ax.scatter(
-            first_order_reflection[0, 0],
-            first_order_reflection[0, 1],
-            first_order_reflection[0, 2],
-            color="orange",
-        )
-        print(first_order_reflection)
+                    ax.quiver(hit_location[0], hit_location[1], hit_location[2], reflection_direction[0], reflection_direction[1], reflection_direction[2], color="red")
+                    ax.scatter(reflection_locations[0, 0], reflection_locations[0, 1], reflection_locations[0, 2], c="yellow")
+                    is_hitted = self.target.isHittedByRay(ray, reflection_locations)
+
+                    is_hitted = self.target.isHittedByRay(ray, hit_location)
+                    print(f"Second Ray {ray.direction} hits target? {is_hitted}")
+
+                    if is_hitted:
+                        ax.scatter(self.target.position[0], self.target.position[1], self.target.position[2], color="magenta", label="Target")
+                        hit_target = True
+                        break
+                    else:
+                        print("Target miss by first order reflection")
+
+            
