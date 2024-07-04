@@ -16,18 +16,18 @@ def main():
     # target = [0.5, 1.0, 0.5]
 
     reflections_order = 1
-    target_face = 5
 
     room = MirrorImageMethod(
         mesh_file_path, source=source_point, target=Target(target_center, target_radius), order=reflections_order
     )
 
-    visualizer = MeshVisualizer(
-        room, source_point, reflections_order, target_face, target=Target(target_center, target_radius)
-    )
+    visualizer = MeshVisualizer(room)
 
     # room.calculatePaths():
-    visualizer.plot_mesh()
+    visualizer.plot_mirrored_sources()
+    visualizer.plot_vertices()
+    visualizer.plot_faces()
+    visualizer.show()
 
 
 if __name__ == "__main__":
