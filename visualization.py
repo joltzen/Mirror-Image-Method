@@ -10,6 +10,7 @@ class MeshVisualizer:
         self.target_face = target_face
 
     def plot_mesh(self):
+        """Plot the mesh."""
         fig = plt.figure()
         ax = fig.add_subplot(111, projection="3d")
         ax.set_box_aspect([1, 1, 1])
@@ -46,7 +47,7 @@ class MeshVisualizer:
                         [mesh.vertices[face[i], 1], mesh.vertices[face[(i + 1) % 3], 1]],
                         [mesh.vertices[face[i], 2], mesh.vertices[face[(i + 1) % 3], 2]], c="black", alpha=0.1 )
             mirrored_ps = self.room.mirror_source(self.room.source, face)
-            ax.scatter(mirrored_ps[0], mirrored_ps[1], mirrored_ps[2], c="pink" if index != self.target_face else "orange")
+            ax.scatter(mirrored_ps[0], mirrored_ps[1], mirrored_ps[2], c="pink")
     
     def plot_highlighted_target_face(self, ax):
         """Plot the faces of the mesh."""        

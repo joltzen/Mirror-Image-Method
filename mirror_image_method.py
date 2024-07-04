@@ -13,6 +13,7 @@ class MirrorImageMethod:
         self.paths = self.calculate_paths()
 
     def calculate_normal(self, face):
+        """Calculate the normal of a face."""
         v0, v1, v2 = self.mesh.vertices[face]
         e0 = v1 - v0
         e1 = v2 - v0
@@ -20,10 +21,12 @@ class MirrorImageMethod:
         return normal / lin.norm(normal)
 
     def centroid_of_face(self, face):
+        """Calculate the centroid of a face."""
         v0, v1, v2 = self.mesh.vertices[face]
         return np.mean([v0, v1, v2], axis=0)
 
     def mirror_source(self, source, face):
+        """Calculate the mirrored source of a face."""
         centroid = self.centroid_of_face(face)
         r = centroid - source
         normal = self.calculate_normal(face)
@@ -31,6 +34,7 @@ class MirrorImageMethod:
         return 2 * orthogonal + source
 
     def find_image_sources(self, source, order, current_order):
+        """Find the image sources."""
         if current_order > order:
             return []
         image_sources = []
@@ -41,10 +45,12 @@ class MirrorImageMethod:
         return image_sources
 
     def shoot_ray(self, r_origin, r_direction):
+        """Shoot a ray and return the hit location and face index."""
         locations, _, index_triangle = self.mesh.ray.intersects_location([r_origin], [r_direction])
         return locations, index_triangle
 
     def calculate_paths(self):
+        """Calculate the paths of the sound waves."""
         paths = {i: [] for i in range(self.order + 1)}
 
         while not any(paths.values()):  # Repeat until at least one path hits the target

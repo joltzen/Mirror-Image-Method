@@ -7,9 +7,10 @@ class Ray:
         self.direction = direction / lin.norm(direction)
 
     #Powered by ChatGPT
-    def generate_rays(number_of_rays):
-        indices = np.arange(0, number_of_rays, dtype=float) + 0.5
-        phi = np.arccos(1 - 2 * indices / number_of_rays)
+    def generate_rays(n):
+        """Generate n rays in a hemisphere."""
+        indices = np.arange(0, n, dtype=float) + 0.5
+        phi = np.arccos(1 - 2 * indices / n)
         theta = np.pi * (1 + 5**0.5) * indices
 
         x = np.sin(phi) * np.cos(theta)
@@ -21,6 +22,7 @@ class Ray:
     
     #Powered by ChatGPT
     def generate_random_rays(origin, n):
+        """Generate n random rays in a hemisphere."""
         z = 2 * np.random.rand(n) - 1
         t = 2 * np.pi * np.random.rand(n)
         r = np.sqrt(1 - z**2)
@@ -38,6 +40,7 @@ class Target:
         self.radius = radius
 
     def is_hitted_by_ray(self, ray: Ray, hitLocation):
+        """Check if a ray hits the target."""
         #Verbindung zwischen Startpunkt Ray und Zentrum der Kugel
         a = self.position - ray.origin
         u = np.dot(a, ray.direction) / np.dot(ray.direction, ray.direction)
@@ -47,6 +50,7 @@ class Target:
         return lin.norm(d) <= self.radius
 
     def generate_random_coordinates():
+        """Generate random coordinates in a unit cube."""
         x = np.random.uniform(*(0,1))
         y = np.random.uniform(*(0,1))
         z = np.random.uniform(*(0,1))
@@ -56,6 +60,7 @@ class SoundPath:
         self.rays = []
 
     def add_ray(self, origin, direction, reflection_point=None, order=0, face_index=None):
+        """Add a ray to the path."""
         self.rays.append({
             "origin": origin,
             "direction": direction,
@@ -65,6 +70,7 @@ class SoundPath:
         })
 
     def calculate_travel_time(self, speed_of_sound=343.0):
+        """Calculate the total travel time of the path."""
         total_distance = 0.0
         for ray in self.rays:
             if ray["reflection_point"] is not None:
