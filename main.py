@@ -7,6 +7,7 @@ from utils import Ray, Target
 def main():
     mesh_file_path = "./model/simple_cube_normals_flipped.obj"
     source_point = np.array([0.123, 0.2, 0.113])
+    target_face = 5
     # Test für target ray 1
     target_center = [0.683, 0.5, 0.433]
     target_radius = 0.1
@@ -20,14 +21,12 @@ def main():
     room = MirrorImageMethod(
         mesh_file_path, source=source_point, target=Target(target_center, target_radius), order=reflections_order
     )
+    visualizer = MeshVisualizer(room, source_point, reflections_order, target_face, target=Target(target_center, target_radius))
+    
 
-    visualizer = MeshVisualizer(room)
 
     # room.calculatePaths():
-    visualizer.plot_mirrored_sources()
-    visualizer.plot_vertices()
-    visualizer.plot_faces()
-    visualizer.show()
+    visualizer.plot_mesh()
 
 
 if __name__ == "__main__":
