@@ -56,20 +56,19 @@ class MeshVisualizer:
             orthogonal = np.dot(r, normal) * normal
             mirrored_source = self.room.mirror_source(ps, face)
 
-            ax.quiver(ps[0], ps[1], ps[2], r[0], r[1], r[2], color="green", alpha=0.2)
-            ax.text(ps[0] + r[0]/2, ps[1] + r[1]/2, ps[2] + r[2]/2, 'R', color='green')
-            ax.quiver(center[0], center[1], center[2], normal[0], normal[1], normal[2], color="red", alpha=0.2)
-            ax.text(center[0] + normal[0]/2, center[1] + normal[1]/2, center[2] + normal[2]/2, 'n', color='red')
-            ax.quiver(ps[0], ps[1], ps[2], orthogonal[0], orthogonal[1], orthogonal[2], color="purple", alpha=0.2)
-            ax.text(ps[0] + orthogonal[0]/2, ps[1] + orthogonal[1]/2, ps[2] + orthogonal[2]/2, 'n|r|cos(alpha)', color='purple')
-            ax.scatter(mirrored_source[0], mirrored_source[1], mirrored_source[2], c="orange", alpha=0.2)
-            ax.text(mirrored_source[0], mirrored_source[1], mirrored_source[2], 'I', color='orange')
+            # ax.quiver(ps[0], ps[1], ps[2], r[0], r[1], r[2], color="green", alpha=0.2)
+            # ax.text(ps[0] + r[0]/2, ps[1] + r[1]/2, ps[2] + r[2]/2, 'R', color='green')
+            # ax.quiver(center[0], center[1], center[2], normal[0], normal[1], normal[2], color="red", alpha=0.2)
+            # ax.text(center[0] + normal[0]/2, center[1] + normal[1]/2, center[2] + normal[2]/2, 'n', color='red')
+            # ax.quiver(ps[0], ps[1], ps[2], orthogonal[0], orthogonal[1], orthogonal[2], color="purple", alpha=0.2)
+            # ax.text(ps[0] + orthogonal[0]/2, ps[1] + orthogonal[1]/2, ps[2] + orthogonal[2]/2, 'n|r|cos(alpha)', color='purple')
+            # ax.scatter(mirrored_source[0], mirrored_source[1], mirrored_source[2], c="orange", alpha=0.2)
+            # ax.text(mirrored_source[0], mirrored_source[1], mirrored_source[2], 'I', color='orange')
 
     def plot_reflections(self, ax):
         paths_dict = self.room.paths
-        print("-" * 40)
+        print("-" * 80)
         print(sum(len(paths) for paths in paths_dict.values()), "paths found.")
-        print("-" * 40)
 
         order_colors = ['blue', 'red', 'green', 'purple', 'orange', 'cyan', 'magenta']
         hit_colors = ['red', 'green', 'purple', 'orange', 'cyan', 'magenta', 'blue']
@@ -77,7 +76,9 @@ class MeshVisualizer:
         for order, paths in paths_dict.items():
             for path in paths:
                 travel_time = path.calculate_travel_time()
+                print("=" * 80)
                 print(f"Travel time for order {order}: {travel_time:.6f} seconds")
+                print("=" * 80)
                 for ray_info in path.rays:
                     origin = ray_info["origin"]
                     direction = ray_info["direction"]
@@ -105,11 +106,9 @@ class MeshVisualizer:
         face_index = ray_info["face_index"]
 
         print(f"Ray Info (Order {order}):")
-        print(f"  Origin: {origin}")
-        print(f"  Direction: {direction}")
-        print(f"  Face Index: {face_index}")
-        if reflection_point is not None:
-            print(f"  Reflection Point: {reflection_point}")
-        else:
-            print("  Reflection Point: None")
+        print(f"  Origin:         {origin}")
+        print(f"  Direction:      {direction}")
+        print(f"  Face Index:     {face_index}")
+        print(f"  Reflection Point: {reflection_point if reflection_point is not None else 'None'}")
+
         print("-" * 40)
