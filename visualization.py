@@ -94,17 +94,27 @@ class MeshVisualizer:
         paths = self.mesh_handler.calculatePaths()
         print(len(paths), "paths found.")
         
+        order_colors = ['blue', 'red', 'green', 'purple', 'orange', 'cyan', 'magenta']
+
         for path in paths:
             for ray_info in path.rays:
                 origin = ray_info["origin"]
                 direction = ray_info["direction"]
                 reflection_point = ray_info["reflection_point"]
                 order = ray_info["order"]
-
-                if order == 0:
-                    ax.quiver(origin[0], origin[1], origin[2], direction[0], direction[1], direction[2], color="blue")
+                
+                print(f"Ray Info (Order {order}):")
+                print(f"  Origin: {origin}")
+                print(f"  Direction: {direction}")
+                if reflection_point is not None:
+                    print(f"  Reflection Point: {reflection_point}")
                 else:
-                    ax.quiver(origin[0], origin[1], origin[2], direction[0], direction[1], direction[2], color="red")
+                    print("  Reflection Point: None")
+                print("-" * 40)
+
+                color = order_colors[order % len(order_colors)]
+                ax.quiver(origin[0], origin[1], origin[2], direction[0], direction[1], direction[2], color=color)
+
                 if reflection_point is not None:
                     ax.scatter(reflection_point[0], reflection_point[1], reflection_point[2], c="orange")
 
