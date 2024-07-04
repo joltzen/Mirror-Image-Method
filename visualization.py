@@ -97,6 +97,7 @@ class MeshVisualizer:
             ax.scatter(self.room.target.position[0], self.room.target.position[1], self.room.target.position[2], color="magenta", label="Target", s=self.room.target.radius * 1000)
         else:
             print("No rays hit the target.")
+            
 
     def print_ray_info(self, ray_info):
         origin = ray_info["origin"]

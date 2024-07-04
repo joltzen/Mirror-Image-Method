@@ -46,39 +46,41 @@ class MirrorImageMethod:
 
     def calculate_paths(self):
         paths = {i: [] for i in range(self.order + 1)}
-        initial_rays = Ray.generate_random_rays(self.source, 100)
 
-        for ray in initial_rays:
-            path = SoundPath()
-            current_ray = ray
-            current_order = 0
-            while current_order <= self.order:
-                locations, index_triangle = self.shoot_ray(current_ray.origin, current_ray.direction)
-                if not locations.size:
-                    break
+        while not any(paths.values()):  # Repeat until at least one path hits the target
+            initial_rays = Ray.generate_random_rays(self.source, 100)
 
-                hit_location = locations[0]
-                face_index = index_triangle[0]
-                mirrored_source, _ = self.image_sources[index_triangle[0]]
-                path.add_ray(current_ray.origin, current_ray.direction, hit_location, current_order, face_index)
+            for ray in initial_rays:
+                path = SoundPath()
+                current_ray = ray
+                current_order = 0
+                while current_order <= self.order:
+                    locations, index_triangle = self.shoot_ray(current_ray.origin, current_ray.direction)
+                    if not locations.size:
+                        break
 
-                if self.target.is_hitted_by_ray(ray, hit_location):
-                    paths[current_order].append(path)
-                    break
+                    hit_location = locations[0]
+                    face_index = index_triangle[0]
+                    mirrored_source, _ = self.image_sources[index_triangle[0]]
+                    path.add_ray(current_ray.origin, current_ray.direction, hit_location, current_order, face_index)
 
-                reflection_direction = hit_location - mirrored_source
-                reflection_direction /= lin.norm(reflection_direction)
-                reflection_locations, reflection_index_triangle = self.shoot_ray(hit_location, reflection_direction)
-
-                if reflection_locations.size:
-                    current_order += 1
-                    reflection_hit_location = reflection_locations[0]
-                    reglected_face_index = reflection_index_triangle[0]
-                    current_ray = Ray(hit_location, reflection_direction)
-                    path.add_ray(current_ray.origin, current_ray.direction, reflection_hit_location, current_order, reglected_face_index)
-
-                    if self.target.is_hitted_by_ray(current_ray, reflection_hit_location):
+                    if self.target.is_hitted_by_ray(ray, hit_location):
                         paths[current_order].append(path)
                         break
+
+                    reflection_direction = hit_location - mirrored_source
+                    reflection_direction /= lin.norm(reflection_direction)
+                    reflection_locations, reflection_index_triangle = self.shoot_ray(hit_location, reflection_direction)
+
+                    if reflection_locations.size:
+                        current_order += 1
+                        reflection_hit_location = reflection_locations[0]
+                        reglected_face_index = reflection_index_triangle[0]
+                        current_ray = Ray(hit_location, reflection_direction)
+                        path.add_ray(current_ray.origin, current_ray.direction, reflection_hit_location, current_order, reglected_face_index)
+
+                        if self.target.is_hitted_by_ray(current_ray, reflection_hit_location):
+                            paths[current_order].append(path)
+                            break
 
         return paths
