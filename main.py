@@ -8,25 +8,18 @@ def main():
     mesh_file_path = "./model/simple_cube_normals_flipped.obj"
     source_point = np.array([0.123, 0.2, 0.113])
     # Test für target ray 1
-    target_center = [0.683, 0.5, 0.433]
-    target_radius = 0.1
-    # Test für target first reflection
-    # target = [1.0, 0.54592857, 0.61392857]
+    target = Target([0.683, 0.5, 0.433], 0.1)
+    order = 1
 
-    # target = [0.5, 1.0, 0.5]
-
-    reflections_order = 1
-
-    room = MirrorImageMethod(
-        mesh_file_path, source=source_point, target=Target(target_center, target_radius), order=reflections_order
-    )
+    room = MirrorImageMethod(mesh_file_path, source_point, target, order)
+    room.simulate(5)
 
     visualizer = MeshVisualizer(room)
 
-    # room.calculatePaths():
     visualizer.plot_mirrored_sources()
     visualizer.plot_vertices()
     visualizer.plot_faces()
+    visualizer.plot_target()
     visualizer.show()
 
 

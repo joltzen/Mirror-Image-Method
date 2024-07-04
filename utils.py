@@ -5,11 +5,14 @@ import numpy as np
 class Ray:
     def __init__(self, origin, direction):
         self.origin = origin
-        normalized_d = direction / lin.norm(direction)
-        self.direction = normalized_d
-
+        self.direction = direction / lin.norm(direction)
+        self.lenght = lin.norm(self.direction)
+    def __str__(self):
+        return f"Ray(Origin: {self.origin}, Direction: {self.direction})"
+    
+    
     #Powered by ChatGPT
-    def generate_rays(numberOfRays):
+    def generate_rays(origin, numberOfRays):
         indices = np.arange(0, numberOfRays, dtype=float) + 0.5
 
         phi = np.arccos(1 - 2*indices/numberOfRays)
@@ -20,7 +23,14 @@ class Ray:
         z = np.cos(phi)
 
         directions = np.stack((x, y, z), axis=-1)
-        return directions
+
+        directions = directions / lin.norm(directions)
+
+        origins = np.tile(origin, (numberOfRays, 1))
+
+        rays = [Ray(origins[i], directions[i]) for i in range(numberOfRays)]
+        
+        return rays
     
     #Powered by ChatGPT
     def generate_random_rays(origin, n):
@@ -54,3 +64,11 @@ class Target:
             return True
         
         return False
+    
+class Path:
+    def __init__(self, ray, order):
+        self.ray = ray
+        self.order = order
+
+
+    
