@@ -1,7 +1,8 @@
+from typing import List
 import trimesh
 import numpy as np
 import numpy.linalg as lin
-from utils import Ray, Target, Path
+from utils import Ray, Target, SoundPath
 
 
 class MirrorImageMethod:
@@ -10,7 +11,7 @@ class MirrorImageMethod:
         self.source = source
         self.order = order
         self.target = target
-        self.paths = []
+        self.paths:List[SoundPath] = []
 
     def calculate_normal(self, face):
         v0, v1, v2 = self.mesh.vertices[face]
@@ -58,7 +59,7 @@ class MirrorImageMethod:
 
             #3. Test wether the ray hits only a surface or the target
             if self.target.isHittedByRay(ray, hitLocation):
-                self.paths.append(Path(ray, 1))
+                self.paths.append(SoundPath(ray, 1))
                 print("Target hitted")
                 continue
                 
@@ -67,57 +68,90 @@ class MirrorImageMethod:
 
             #5. If surface: repeat the reflection another time (but just n = order times)
 
-    def recursivePathCalculation(self, ray: Ray, order:int):
-        
+    # def plot_reflections(self, numberOfRays: int):
+    #     """Plot the reflections of the mesh."""        
+    #     random_rays = Ray.generate_random_rays(self.source, numberOfRays)
+    #     hit_target = False
+
+    #     for ray in random_rays:
+    #         # Shoot the ray from the source point
+    #         locations, index_triangle = self.room.shootRay(ray.origin, ray.direction)
+
+    #         if locations.shape[0] > 0:
+    #             hit_location = locations[0]
+    #             mirrored_source, order = self.image_sources[index_triangle[0]]
+
+    #             # Check if the target is hit by the original ray
+    #             is_hitted = self.room.target.isHittedByRay(ray, hit_location)
+    #             print(f"Ray {ray.direction} hits target? {is_hitted}")
+
+    #             if is_hitted:
+    #                 print("Target hit")
+    #                 hit_target = True
+    #                 break
+    #             else:
+    #                 print("Target miss")
+
+    #                 # Calculate reflection direction
+    #                 reflection_direction = hit_location - mirrored_source
+    #                 reflection_direction /= np.linalg.norm(reflection_direction)  # Normalize the direction
+
+    #                 # Shoot the reflected ray from the hit location
+    #                 reflection_locations, _ = self.room.shootRay(hit_location, reflection_direction)
+
+    #                 if reflection_locations.shape[0] > 0:
+    #                     reflection_hit_location = reflection_locations[0]
 
 
+    #                     # Check if the target is hit by the reflected ray
+    #                     reflected_ray = Ray(hit_location, reflection_direction)
+    #                     is_hitted = self.room.target.isHittedByRay(reflected_ray, reflection_hit_location)
+    #                     print(f"Second Ray {reflection_direction} hits target? {is_hitted}")
 
-    # def calculatePath(self, rays):
+    #                     if is_hitted:
+    #                         print("Target hit by first order reflection")
+    #                         hit_target = True
+    #                         break
+    #                     else:
+    #                         print("Target miss by first order reflection")
 
-    #     for index in range(self.order):
-    #         locations, index_triangle = self.shootRay(self.source, [0, 1, 0])
+    #     if not hit_target:
+    #         print("No rays hit the target.")
 
-    #         if len(locations) > 0:
-    #             mirroredSource = self.mirror_source(index_triangle[0])
+    # def singleRay(self, ray: Ray):
+    #     for index, face in enumerate(self.mesh.faces):
+    #         v0, v1, v2 = self.mesh.vertices[face]
+    #         e0 = v1 - v0
+    #         e1 = v2 - v0
+    #         s = ray.origin - v0
 
-    #             direction = locations[0] - mirroredSource
+    #         q2 = lin.cross(ray.direction, e1)
+    #         q1 = lin.cross(s, e0)
 
-    #             first_Order_reflection, _ = self.shootRay(locations[0], direction)
+    #         if np.abs(np.dot(q2, e0)) <= 0.00005:
+    #             continue
 
-    def singleRay(self, ray: Ray):
-        for index, face in enumerate(self.mesh.faces):
-            v0, v1, v2 = self.mesh.vertices[face]
-            e0 = v1 - v0
-            e1 = v2 - v0
-            s = ray.origin - v0
+    #         t = np.dot(q1, e1)
+    #         beta = np.dot(q2, s)
+    #         gamma = np.dot(q1, ray.direction)
 
-            q2 = lin.cross(ray.direction, e1)
-            q1 = lin.cross(s, e0)
+    #         result = (1 / np.dot(q2, e0)) * np.array([t, beta, gamma])
 
-            if np.abs(np.dot(q2, e0)) <= 0.00005:
-                continue
+    #         if result[1] < 0:
+    #             continue
 
-            t = np.dot(q1, e1)
-            beta = np.dot(q2, s)
-            gamma = np.dot(q1, ray.direction)
+    #         if result[2] < 0:
+    #             continue
 
-            result = (1 / np.dot(q2, e0)) * np.array([t, beta, gamma])
+    #         if result[1] + result[2] > 1:
+    #             continue
 
-            if result[1] < 0:
-                continue
+    #         intersection = (
+    #             ((1 - result[1] - result[2]) * v0) + result[1] * v1 + result[2] * v2
+    #         )
 
-            if result[2] < 0:
-                continue
+    #         return (intersection, index)
 
-            if result[1] + result[2] > 1:
-                continue
-
-            intersection = (
-                ((1 - result[1] - result[2]) * v0) + result[1] * v1 + result[2] * v2
-            )
-
-            return (intersection, index)
-
-        return -1, -1
+    #     return -1, -1
     
         

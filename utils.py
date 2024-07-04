@@ -6,9 +6,13 @@ class Ray:
     def __init__(self, origin, direction):
         self.origin = origin
         self.direction = direction / lin.norm(direction)
-        self.lenght = lin.norm(self.direction)
+        self.lenght = 1
+
     def __str__(self):
-        return f"Ray(Origin: {self.origin}, Direction: {self.direction})"
+        return f"Ray(Origin: {self.origin}, Direction: {self.direction}, Length: {self.lenght})"
+    
+    def getEndPoint(self):
+        return self.origin + self.lenght * self.direction
     
     
     #Powered by ChatGPT
@@ -65,10 +69,10 @@ class Target:
         
         return False
     
-class Path:
-    def __init__(self, ray, order):
-        self.ray = ray
-        self.order = order
+class SoundPath:
+    def __init__(self, ray:Ray, order:int):
+        self.ray:Ray = ray
+        self.order:int = order
 
 
     
