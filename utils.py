@@ -54,3 +54,18 @@ class Target:
             return True
         
         return False
+
+class Path: 
+    def __init__(self):
+        self.rays = []
+
+    def addRay(self, origin, direction, reflection_point=None, order=0):
+        self.rays.append({
+            "origin": origin,
+            "direction": direction,
+            "reflection_point": reflection_point,
+            "order": order
+        })
+
+    def __repr_(self):
+        return f"Path with {len(self.rays)} rays."

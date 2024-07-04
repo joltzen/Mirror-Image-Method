@@ -1,7 +1,7 @@
 import trimesh
 import numpy as np
 import numpy.linalg as lin
-from utils import Ray, Target
+from utils import Ray, Target, Path
 
 
 class MirrorImageMethod:
@@ -10,7 +10,9 @@ class MirrorImageMethod:
         self.source = source
         self.order = order
         self.target = Target([0.5, 0.5, 0], 0.1)
-
+        self.image_sources = self.find_image_sources(
+            source, order
+        )
     def calculate_normal(self, face):
         v0, v1, v2 = self.mesh.vertices[face]
         e0 = v1 - v0
@@ -49,16 +51,45 @@ class MirrorImageMethod:
         return locations, index_triangle
 
     def calculatePaths(self):
+        paths = []
+        initial_rays = Ray.generate_random_rays(self.source, 100)  
+        
+        for ray in initial_rays:
+            path = Path()
+            current_ray = ray
+            current_order = 0
+            while current_order <= self.order:
+                locations, index_triangle = self.shootRay(current_ray.origin, current_ray.direction)
+                if len(locations) == 0:
+                    break
 
-        for index in range(self.order):
-            locations, index_triangle = self.shootRay(self.source, [0, 1, 0])
+                hit_location = locations[0]
+                mirrored_source, order = self.image_sources[index_triangle[0]]
+                path.addRay(current_ray.origin, current_ray.direction, hit_location, current_order)
 
-            if len(locations) > 0:
-                mirroredSource = self.mirror_source(index_triangle[0])
+                is_hitted = self.target.isHittedByRay(ray, hit_location)
 
-                direction = locations[0] - mirroredSource
+                if is_hitted:
+                    paths.append(path)
+                    break
 
-                first_Order_reflection, _ = self.shootRay(locations[0], direction)
+                reflection_direction = hit_location - mirrored_source
+                reflection_direction /= np.linalg.norm(reflection_direction)
+                reflection_locations, _ = self.shootRay(hit_location, reflection_direction)
+                
+                if reflection_locations.shape[0] > 0:
+                    current_order += 1
+                    reflection_hit_location = reflection_locations[0]
+                    current_ray = Ray(hit_location, reflection_direction)
+                    is_hitted = self.target.isHittedByRay(current_ray, reflection_hit_location)
+                    path.addRay(current_ray.origin, current_ray.direction, reflection_hit_location, current_order)
+
+                    if is_hitted:
+                            paths.append(path)
+                            break
+
+        return paths
+            
 
     def singleRay(self, ray: Ray):
         for index, face in enumerate(self.mesh.faces):

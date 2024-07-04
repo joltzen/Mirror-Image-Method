@@ -91,65 +91,24 @@ class MeshVisualizer:
             # ax.text(mirrored_source[0], mirrored_source[1], mirrored_source[2], 'I', color='orange')
 
     def plot_reflections(self, ax):
-        """Plot the reflections of the mesh."""
-        ps = self.source_point
-        random_rays = Ray.generate_random_rays(ps, 10)
-        hit_target = False
-        rays_to_plot = []
+        paths = self.mesh_handler.calculatePaths()
+        print(len(paths), "paths found.")
+        
+        for path in paths:
+            for ray_info in path.rays:
+                origin = ray_info["origin"]
+                direction = ray_info["direction"]
+                reflection_point = ray_info["reflection_point"]
+                order = ray_info["order"]
 
-        for ray in random_rays:
-            # Shoot the ray from the source point
-            locations, index_triangle = self.mesh_handler.shootRay(ray.origin, ray.direction)
+                if order == 0:
+                    ax.quiver(origin[0], origin[1], origin[2], direction[0], direction[1], direction[2], color="blue")
+                else:
+                    ax.quiver(origin[0], origin[1], origin[2], direction[0], direction[1], direction[2], color="red")
+                if reflection_point is not None:
+                    ax.scatter(reflection_point[0], reflection_point[1], reflection_point[2], c="orange")
 
-            if locations.shape[0] > 0:
-                hit_location = locations[0]
-                mirrored_source, order = self.image_sources[index_triangle[0]]
-
-                # Check if the target is hit by the original ray
-                is_hitted = self.target.isHittedByRay(ray, hit_location)
-                if is_hitted:
-                    rays_to_plot = [(ray, hit_location, None)]
-                    hit_target = True
-                    break
-
-                # Calculate reflection direction
-                reflection_direction = hit_location - mirrored_source
-                reflection_direction /= np.linalg.norm(reflection_direction)  # Normalize the direction
-
-                # Shoot the reflected ray from the hit location
-                reflection_locations, _ = self.mesh_handler.shootRay(hit_location, reflection_direction)
-
-                if reflection_locations.shape[0] > 0:
-                    reflection_hit_location = reflection_locations[0]
-
-                    # Check if the target is hit by the reflected ray
-                    reflected_ray = Ray(hit_location, reflection_direction)
-                    is_hitted = self.target.isHittedByRay(reflected_ray, reflection_hit_location)
-                    if is_hitted:
-                        rays_to_plot = [
-                            (ray, hit_location, None),
-                            (reflected_ray, reflection_hit_location, reflection_direction),
-                        ]
-                        hit_target = True
-                        break
-
-                # Add the original ray and its reflection for plotting if no hit yet
-                rays_to_plot.append((ray, hit_location, reflection_direction))
-
-        for ray, hit_location, reflection_direction in rays_to_plot:
-            # Plot the original ray
-            ax.quiver(ray.origin[0], ray.origin[1], ray.origin[2], ray.direction[0], ray.direction[1], ray.direction[2], color="blue")
-            ax.scatter(hit_location[0], hit_location[1], hit_location[2], c="orange")
-
-            if reflection_direction is not None:
-                # Plot the reflected ray
-                reflection_locations, _ = self.mesh_handler.shootRay(hit_location, reflection_direction)
-                if reflection_locations.shape[0] > 0:
-                    reflection_hit_location = reflection_locations[0]
-                    ax.quiver(hit_location[0], hit_location[1], hit_location[2], reflection_direction[0], reflection_direction[1], reflection_direction[2], color="red")
-                    ax.scatter(reflection_hit_location[0], reflection_hit_location[1], reflection_hit_location[2], c="green")
-
-        if hit_target:
+        if paths:
             ax.scatter(self.target.position[0], self.target.position[1], self.target.position[2], color="magenta", label="Target")
         else:
             print("No rays hit the target.")
