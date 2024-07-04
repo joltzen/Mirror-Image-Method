@@ -45,7 +45,7 @@ class MirrorImageMethod:
         return locations, index_triangle
 
     def calculate_paths(self):
-        paths = []
+        paths = {i: [] for i in range(self.order + 1)}
         initial_rays = Ray.generate_random_rays(self.source, 100)
 
         for ray in initial_rays:
@@ -63,7 +63,7 @@ class MirrorImageMethod:
                 path.add_ray(current_ray.origin, current_ray.direction, hit_location, current_order, face_index)
 
                 if self.target.is_hitted_by_ray(ray, hit_location):
-                    paths.append(path)
+                    paths[current_order].append(path)
                     break
 
                 reflection_direction = hit_location - mirrored_source
@@ -78,7 +78,7 @@ class MirrorImageMethod:
                     path.add_ray(current_ray.origin, current_ray.direction, reflection_hit_location, current_order, reglected_face_index)
 
                     if self.target.is_hitted_by_ray(current_ray, reflection_hit_location):
-                        paths.append(path)
+                        paths[current_order].append(path)
                         break
 
         return paths

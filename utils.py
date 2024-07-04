@@ -58,5 +58,12 @@ class SoundPath:
             "face_index": face_index
         })
 
+    def calculate_travel_time(self, speed_of_sound=343.0):
+        total_distance = 0.0
+        for ray in self.rays:
+            if ray["reflection_point"] is not None:
+                total_distance += lin.norm(ray["origin"] - ray["reflection_point"])
+        return total_distance / speed_of_sound
+    
     def __repr__(self):
         return f"Path with {len(self.rays)} rays."

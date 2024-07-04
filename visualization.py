@@ -66,29 +66,33 @@ class MeshVisualizer:
             ax.text(mirrored_source[0], mirrored_source[1], mirrored_source[2], 'I', color='orange')
 
     def plot_reflections(self, ax):
-        paths = self.room.paths
-        print(len(paths), "paths found.")
+        paths_dict = self.room.paths
+        print("-" * 40)
+        print(sum(len(paths) for paths in paths_dict.values()), "paths found.")
+        print("-" * 40)
 
         order_colors = ['blue', 'red', 'green', 'purple', 'orange', 'cyan', 'magenta']
         hit_colors = ['red', 'green', 'purple', 'orange', 'cyan', 'magenta', 'blue']
 
-        for path in paths:
-            for ray_info in path.rays:
-                origin = ray_info["origin"]
-                direction = ray_info["direction"]
-                reflection_point = ray_info["reflection_point"]
-                order = ray_info["order"]
+        for order, paths in paths_dict.items():
+            for path in paths:
+                travel_time = path.calculate_travel_time()
+                print(f"Travel time for order {order}: {travel_time:.6f} seconds")
+                for ray_info in path.rays:
+                    origin = ray_info["origin"]
+                    direction = ray_info["direction"]
+                    reflection_point = ray_info["reflection_point"]
 
-                self.print_ray_info(ray_info)
+                    self.print_ray_info(ray_info)
 
-                color = order_colors[order % len(order_colors)]
-                hit_color = hit_colors[order % len(hit_colors)]
-                ax.quiver(origin[0], origin[1], origin[2], direction[0], direction[1], direction[2], color=color)
+                    color = order_colors[order % len(order_colors)]
+                    hit_color = hit_colors[order % len(hit_colors)]
+                    ax.quiver(origin[0], origin[1], origin[2], direction[0], direction[1], direction[2], color=color)
 
-                if reflection_point is not None:
-                    ax.scatter(reflection_point[0], reflection_point[1], reflection_point[2], c=hit_color)
+                    if reflection_point is not None:
+                        ax.scatter(reflection_point[0], reflection_point[1], reflection_point[2], c=hit_color)
 
-        if paths:
+        if any(paths_dict.values()):
             ax.scatter(self.room.target.position[0], self.room.target.position[1], self.room.target.position[2], color="magenta", label="Target", s=self.room.target.radius * 1000)
         else:
             print("No rays hit the target.")

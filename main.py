@@ -15,5 +15,12 @@ def main():
     # room.calculatePaths():
     visualizer.plot_mesh()
 
+    for order, paths in room.paths.items():
+        print(f"\nPaths with {order} reflections:")
+        for path in paths:
+            travel_time = path.calculate_travel_time()
+            print(f"  Travel time: {travel_time:.6f} seconds")
+
 if __name__ == "__main__":
     main()
+    
