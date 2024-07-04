@@ -104,9 +104,12 @@ class MeshVisualizer:
         direction = ray_info["direction"]
         reflection_point = ray_info["reflection_point"]
         order = ray_info["order"]
+        face_index = ray_info["face_index"]
+
         print(f"Ray Info (Order {order}):")
         print(f"  Origin: {origin}")
         print(f"  Direction: {direction}")
+        print(f"  Face Index: {face_index}")
         if reflection_point is not None:
             print(f"  Reflection Point: {reflection_point}")
         else:

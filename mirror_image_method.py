@@ -58,8 +58,9 @@ class MirrorImageMethod:
                     break
 
                 hit_location = locations[0]
+                face_index = index_triangle[0]
                 mirrored_source, _ = self.image_sources[index_triangle[0]]
-                path.add_ray(current_ray.origin, current_ray.direction, hit_location, current_order)
+                path.add_ray(current_ray.origin, current_ray.direction, hit_location, current_order, face_index)
 
                 if self.target.is_hitted_by_ray(ray, hit_location):
                     paths.append(path)
@@ -67,13 +68,14 @@ class MirrorImageMethod:
 
                 reflection_direction = hit_location - mirrored_source
                 reflection_direction /= lin.norm(reflection_direction)
-                reflection_locations, _ = self.shoot_ray(hit_location, reflection_direction)
+                reflection_locations, reflection_index_triangle = self.shoot_ray(hit_location, reflection_direction)
 
                 if reflection_locations.size:
                     current_order += 1
                     reflection_hit_location = reflection_locations[0]
+                    reglected_face_index = reflection_index_triangle[0]
                     current_ray = Ray(hit_location, reflection_direction)
-                    path.add_ray(current_ray.origin, current_ray.direction, reflection_hit_location, current_order)
+                    path.add_ray(current_ray.origin, current_ray.direction, reflection_hit_location, current_order, reglected_face_index)
 
                     if self.target.is_hitted_by_ray(current_ray, reflection_hit_location):
                         paths.append(path)

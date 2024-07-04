@@ -49,12 +49,13 @@ class SoundPath:
     def __init__(self):
         self.rays = []
 
-    def add_ray(self, origin, direction, reflection_point=None, order=0):
+    def add_ray(self, origin, direction, reflection_point=None, order=0, face_index=None):
         self.rays.append({
             "origin": origin,
             "direction": direction,
             "reflection_point": reflection_point,
-            "order": order
+            "order": order,
+            "face_index": face_index
         })
 
     def __repr__(self):
