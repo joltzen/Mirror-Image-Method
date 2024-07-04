@@ -95,6 +95,7 @@ class MeshVisualizer:
         print(len(paths), "paths found.")
         
         order_colors = ['blue', 'red', 'green', 'purple', 'orange', 'cyan', 'magenta']
+        hit_colors = ['red', 'green', 'purple', 'orange', 'cyan', 'magenta', 'blue']
 
         for path in paths:
             for ray_info in path.rays:
@@ -102,23 +103,31 @@ class MeshVisualizer:
                 direction = ray_info["direction"]
                 reflection_point = ray_info["reflection_point"]
                 order = ray_info["order"]
-                
-                print(f"Ray Info (Order {order}):")
-                print(f"  Origin: {origin}")
-                print(f"  Direction: {direction}")
-                if reflection_point is not None:
-                    print(f"  Reflection Point: {reflection_point}")
-                else:
-                    print("  Reflection Point: None")
-                print("-" * 40)
 
+                self.print_ray_info(ray_info)
+                
                 color = order_colors[order % len(order_colors)]
+                hit_color = hit_colors[order % len(hit_colors)]
                 ax.quiver(origin[0], origin[1], origin[2], direction[0], direction[1], direction[2], color=color)
 
                 if reflection_point is not None:
-                    ax.scatter(reflection_point[0], reflection_point[1], reflection_point[2], c="orange")
+                    ax.scatter(reflection_point[0], reflection_point[1], reflection_point[2], c=hit_color)
 
         if paths:
             ax.scatter(self.target.position[0], self.target.position[1], self.target.position[2], color="magenta", label="Target", s= self.target.radius * 1000)
         else:
             print("No rays hit the target.")
+
+    def print_ray_info(self, ray_info):
+        origin = ray_info["origin"]
+        direction = ray_info["direction"]
+        reflection_point = ray_info["reflection_point"]
+        order = ray_info["order"]
+        print(f"Ray Info (Order {order}):")
+        print(f"  Origin: {origin}")
+        print(f"  Direction: {direction}")
+        if reflection_point is not None:
+            print(f"  Reflection Point: {reflection_point}")
+        else:
+            print("  Reflection Point: None")
+        print("-" * 40)
