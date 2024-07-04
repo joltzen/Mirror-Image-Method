@@ -33,6 +33,7 @@ class Ray:
 
 class Target:
     def __init__(self, position, radius: float):
+        
         self.position = position
         self.radius = radius
 
@@ -45,6 +46,11 @@ class Target:
 
         return lin.norm(d) <= self.radius
 
+    def generate_random_coordinates():
+        x = np.random.uniform(*(0,1))
+        y = np.random.uniform(*(0,1))
+        z = np.random.uniform(*(0,1))
+        return np.array([x, y, z])
 class SoundPath:
     def __init__(self):
         self.rays = []
