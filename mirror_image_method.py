@@ -9,9 +9,9 @@ class MirrorImageMethod:
         self.source = source
         self.order = order
         self.target = target
-        self.image_sources = self.find_image_sources(
-            source, order
-        )
+        self.image_sources = self.find_image_sources(source, order)
+        self.paths = self.calculate_paths()
+
     def calculate_normal(self, face):
         v0, v1, v2 = self.mesh.vertices[face]
         e0 = v1 - v0

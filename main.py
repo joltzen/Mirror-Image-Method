@@ -1,7 +1,7 @@
 import numpy as np
 from mirror_image_method import MirrorImageMethod
 from visualization import MeshVisualizer
-from utils import Ray, Target
+from utils import Target
 
 def main():
     mesh_file_path = "./model/simple_cube_normals_flipped.obj"
@@ -11,8 +11,7 @@ def main():
     reflections_order = 1
 
     room = MirrorImageMethod(mesh_file_path, source_point, target, reflections_order)
-    visualizer = MeshVisualizer(room, source_point, reflections_order, target_face, target)
-
+    visualizer = MeshVisualizer(room, target_face)
     # room.calculatePaths():
     visualizer.plot_mesh()
 
