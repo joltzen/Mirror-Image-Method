@@ -8,7 +8,7 @@ def main():
     source_point = np.array([0.123, 0.2, 0.113])
     target_face = 5
     target = Target(np.array([0.683, 0.5, 0.433]), 0.1)
-    reflections_order = 1
+    reflections_order = 10
 
     room = MirrorImageMethod(mesh_file_path, source_point, target, reflections_order)
     visualizer = MeshVisualizer(room, target_face)

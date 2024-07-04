@@ -9,7 +9,7 @@ class MirrorImageMethod:
         self.source = source
         self.order = order
         self.target = target
-        self.image_sources = self.find_image_sources(source, order)
+        self.image_sources = self.find_image_sources(source, order, current_order=order)
         self.paths = self.calculate_paths()
 
     def calculate_normal(self, face):
@@ -30,7 +30,7 @@ class MirrorImageMethod:
         orthogonal = np.dot(r, normal) * normal
         return 2 * orthogonal + source
 
-    def find_image_sources(self, source, order, current_order=1):
+    def find_image_sources(self, source, order, current_order):
         if current_order > order:
             return []
         image_sources = []
