@@ -9,7 +9,7 @@ class MirrorImageMethod:
         self.mesh = trimesh.load_mesh(file_path)
         self.source = source
         self.order = order
-        self.target = Target([0.5, 0.5, 0], 0.1)
+        self.target = target
         self.image_sources = self.find_image_sources(
             source, order
         )

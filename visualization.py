@@ -109,6 +109,6 @@ class MeshVisualizer:
                     ax.scatter(reflection_point[0], reflection_point[1], reflection_point[2], c="orange")
 
         if paths:
-            ax.scatter(self.target.position[0], self.target.position[1], self.target.position[2], color="magenta", label="Target")
+            ax.scatter(self.target.position[0], self.target.position[1], self.target.position[2], color="magenta", label="Target", s= self.target.radius * 1000)
         else:
             print("No rays hit the target.")
