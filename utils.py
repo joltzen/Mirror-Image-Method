@@ -38,7 +38,7 @@ class Ray:
     def reflect(self, reflection_coefficient):
         self.energy *= reflection_coefficient
 
-    def apply_distance_loss(self, distance):
+    def apply_energy_loss(self, distance):
         if distance > 0:
             self.energy_loss = self.energy / (distance)**2
 
@@ -76,7 +76,7 @@ class SoundPath:
             distance = 0
 
         ray = Ray(origin, direction, energy)
-        ray.apply_distance_loss(distance)
+        ray.apply_energy_loss(distance)
         self.rays.append({
             "origin": origin,
             "direction": direction,
@@ -105,3 +105,9 @@ class SoundPath:
 
     def __repr__(self):
         return f"Path with {len(self.rays)} rays."
+
+    class SoundWave:
+        def __init__(self, frequency, speed=343.0, initial_energy=1.0):
+            self.frequency = frequency
+            self.speed = speed
+            self.initial_energy = initial_energy

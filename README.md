@@ -72,7 +72,7 @@ Utility classes and functions used across the project.
 - **Ray Class**: Represents a ray with origin, direction, and energy.
   - `generate_random_rays(origin, n, initial_energy)`: Generates random rays in a hemisphere.
   - `reflect(reflection_coefficient)`: Adjusts the energy based on reflection.
-  - `apply_distance_loss(distance)`: Applies energy loss based on travel distance.
+  - `apply_energy_loss(distance)`: Applies energy loss based on travel distance.
 
 - **Target Class**: Represents the target with a position and radius.
   - `is_hitted_by_ray(ray)`: Checks if a ray hits the target.
