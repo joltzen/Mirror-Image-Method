@@ -62,6 +62,10 @@ This file implements the core algorithm of the mirror image method for simulatin
 
 ### visualization.py
 Contains the `MeshVisualizer` class for plotting the 3D mesh and visualizing the sound paths.
+- **MeshVisualizer Class**: Visualizes the 3D mesh and sound paths.
+  - `plot_mesh()`: Plots the mesh, image sources, and reflections.
+  - `plot_faces(ax)`: Plots the faces of the mesh.
+  - `plot_reflections(ax)`: Plots the reflection paths.
 
 ### utils.py
 Utility classes and functions used across the project.
