@@ -85,6 +85,7 @@ class MirrorImageMethod:
                         reglected_face_index = reflection_index_triangle[0]
                         current_ray = Ray(hit_location, reflection_direction, current_ray.energy)
                         current_ray.reflect(self.reflection_coefficient)
+                        current_ray.apply_distance_loss(lin.norm(hit_location - reflection_hit_location))
                         path.add_ray(current_ray.origin, current_ray.direction, reflection_hit_location, current_order, reglected_face_index, current_ray.energy)
 
                         if self.target.is_hitted_by_ray(current_ray):

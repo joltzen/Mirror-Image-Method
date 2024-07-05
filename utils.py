@@ -6,6 +6,7 @@ class Ray:
         self.origin = origin
         self.direction = direction / lin.norm(direction)
         self.energy = energy
+        self.energy_loss = 0.0
 
     #Powered by ChatGPT
     def generate_rays(n):
@@ -39,7 +40,7 @@ class Ray:
 
     def apply_distance_loss(self, distance):
         if distance > 0:
-            self.energy /= distance**2
+            self.energy_loss = self.energy / (distance)**2
 
 class Target:
     def __init__(self, position, radius: float):
@@ -76,14 +77,16 @@ class SoundPath:
 
         ray = Ray(origin, direction, energy)
         ray.apply_distance_loss(distance)
-
         self.rays.append({
             "origin": origin,
             "direction": direction,
             "reflection_point": reflection_point,
-            "order": order,
+            "order": order, 
+            "distance": distance,
             "face_index": face_index,
-            "energy": ray.energy
+            "energy": ray.energy,
+            "energy_loss":  ray.energy_loss
+           
         })
 
     def calculate_travel_time(self, speed_of_sound=343.0):
@@ -98,7 +101,7 @@ class SoundPath:
         """Calculate the total energy loss of the path."""
         if not self.rays:
             return 0.0
-        return self.rays[-1]["energy"]
+        return self.rays[-1]["energy_loss"]
 
     def __repr__(self):
         return f"Path with {len(self.rays)} rays."

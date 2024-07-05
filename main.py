@@ -11,7 +11,7 @@ def main():
     target_position = Target.generate_random_coordinates()
     target = Target(target_position, 0.1)
     reflections_order = 10
-    reflection_coefficient = 0.9
+    reflection_coefficient = 1.0
 
 
     room = MirrorImageMethod(mesh_file_path, source_point, target, reflections_order, reflection_coefficient=reflection_coefficient)

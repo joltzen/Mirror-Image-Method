@@ -147,11 +147,15 @@ class MeshVisualizer:
         reflection_point = ray_info["reflection_point"]
         order = ray_info["order"]
         face_index = ray_info["face_index"]
+        distance = ray_info["distance"]
+        energy = ray_info["energy"]
 
         print(f"Ray Info (Order {order}):")
         print(f"  Origin:         {origin}")
         print(f"  Direction:      {direction}")
         print(f"  Face Index:     {face_index}")
+        print(f"  Distance:       {distance}")
+        print(f"  Energy:         {energy}")
         print(f"  Reflection Point: {reflection_point if reflection_point is not None else 'None'}")
 
         print("-" * 40)
