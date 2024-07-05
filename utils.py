@@ -2,9 +2,10 @@ import numpy.linalg as lin
 import numpy as np
 
 class Ray:
-    def __init__(self, origin, direction):
+    def __init__(self, origin, direction, energy=1.0):
         self.origin = origin
         self.direction = direction / lin.norm(direction)
+        self.energy = energy
 
     #Powered by ChatGPT
     def generate_rays(n):
@@ -21,8 +22,8 @@ class Ray:
         return directions
     
     #Powered by ChatGPT
-    def generate_random_rays(origin, n):
-        """Generate n random rays in a hemisphere."""
+    def generate_random_rays(origin, n, initial_energy=1.0):
+        """Generate n random rays in a hemisphere with specified initial energy."""
         z = 2 * np.random.rand(n) - 1
         t = 2 * np.pi * np.random.rand(n)
         r = np.sqrt(1 - z**2)
@@ -31,7 +32,14 @@ class Ray:
         y = r * np.sin(t)
 
         directions = np.stack((x, y, z), axis=-1)
-        return [Ray(origin, direction) for direction in directions]
+        return [Ray(origin, direction, initial_energy) for direction in directions]
+    
+    def reflect(self, reflection_coefficient):
+        self.energy *= reflection_coefficient
+
+    def apply_distance_loss(self, distance):
+        if distance > 0:
+            self.energy /= distance**2
 
 class Target:
     def __init__(self, position, radius: float):
@@ -39,7 +47,7 @@ class Target:
         self.position = position
         self.radius = radius
 
-    def is_hitted_by_ray(self, ray: Ray, hitLocation):
+    def is_hitted_by_ray(self, ray: Ray):
         """Check if a ray hits the target."""
         #Verbindung zwischen Startpunkt Ray und Zentrum der Kugel
         a = self.position - ray.origin
@@ -59,14 +67,23 @@ class SoundPath:
     def __init__(self):
         self.rays = []
 
-    def add_ray(self, origin, direction, reflection_point=None, order=0, face_index=None):
+    def add_ray(self, origin, direction, reflection_point=None, order=0, face_index=None, energy=1.0):
         """Add a ray to the path."""
+        if reflection_point is not None:
+            distance = lin.norm(origin - reflection_point)
+        else:
+            distance = 0
+
+        ray = Ray(origin, direction, energy)
+        ray.apply_distance_loss(distance)
+
         self.rays.append({
             "origin": origin,
             "direction": direction,
             "reflection_point": reflection_point,
             "order": order,
-            "face_index": face_index
+            "face_index": face_index,
+            "energy": ray.energy
         })
 
     def calculate_travel_time(self, speed_of_sound=343.0):
@@ -77,5 +94,11 @@ class SoundPath:
                 total_distance += lin.norm(ray["origin"] - ray["reflection_point"])
         return total_distance / speed_of_sound
     
+    def calculate_energy_loss(self):
+        """Calculate the total energy loss of the path."""
+        if not self.rays:
+            return 0.0
+        return self.rays[-1]["energy"]
+
     def __repr__(self):
         return f"Path with {len(self.rays)} rays."
