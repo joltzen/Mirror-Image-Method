@@ -105,9 +105,3 @@ class SoundPath:
 
     def __repr__(self):
         return f"Path with {len(self.rays)} rays."
-
-    class SoundWave:
-        def __init__(self, frequency, speed=343.0, initial_energy=1.0):
-            self.frequency = frequency
-            self.speed = speed
-            self.initial_energy = initial_energy
