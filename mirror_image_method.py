@@ -3,8 +3,16 @@ import numpy as np
 import numpy.linalg as lin
 from utils import Ray, Target, SoundPath
 
+
 class MirrorImageMethod:
-    def __init__(self, file_path: str, source: np.ndarray, target: Target, order: int, reflection_coefficient: float):
+    def __init__(
+        self,
+        file_path: str,
+        source: np.ndarray,
+        target: Target,
+        order: int,
+        reflection_coefficient: float,
+    ):
         self.mesh = trimesh.load_mesh(file_path)
         self.source = source
         self.order = order
@@ -42,12 +50,16 @@ class MirrorImageMethod:
         for face in self.mesh.faces:
             mirrored_source = self.mirror_source(source, face)
             image_sources.append((mirrored_source, current_order))
-            image_sources.extend(self.find_image_sources(mirrored_source, order, current_order + 1))
+            image_sources.extend(
+                self.find_image_sources(mirrored_source, order, current_order + 1)
+            )
         return image_sources
 
     def shoot_ray(self, r_origin, r_direction):
         """Shoot a ray and return the hit location and face index."""
-        locations, _, index_triangle = self.mesh.ray.intersects_location([r_origin], [r_direction])
+        locations, _, index_triangle = self.mesh.ray.intersects_location(
+            [r_origin], [r_direction]
+        )
         return locations, index_triangle
 
     def calculate_paths(self):
@@ -62,27 +74,52 @@ class MirrorImageMethod:
                 current_ray = ray
                 current_order = 0
                 while current_order <= self.order:
-                    locations, index_triangle = self.shoot_ray(current_ray.origin, current_ray.direction)
+                    locations, index_triangle = self.shoot_ray(
+                        current_ray.origin, current_ray.direction
+                    )
                     if not locations.size:
                         break
 
                     hit_location = locations[0]
                     face_index = index_triangle[0]
                     mirrored_source, _ = self.image_sources[index_triangle[0]]
-                    
 
                     if self.target.is_hitted_by_ray(current_ray):
-                        if np.dot(current_ray.direction, self.target.position - current_ray.origin) > 0:
+                        if (
+                            np.dot(
+                                current_ray.direction,
+                                self.target.position - current_ray.origin,
+                            )
+                            > 0
+                        ):
                             self.target.set_hit_location(current_ray)
-                            path.add_ray(current_ray.origin, current_ray.direction, hit_location, current_order, face_index, current_ray.energy, current_ray.hit_location)
+                            path.add_ray(
+                                current_ray.origin,
+                                current_ray.direction,
+                                hit_location,
+                                current_order,
+                                face_index,
+                                current_ray.energy,
+                                current_ray.hit_location,
+                            )
                             paths[current_order].append(path)
                             break
                     else:
-                        path.add_ray(current_ray.origin, current_ray.direction, hit_location, current_order, face_index, current_ray.energy, None)
+                        path.add_ray(
+                            current_ray.origin,
+                            current_ray.direction,
+                            hit_location,
+                            current_order,
+                            face_index,
+                            current_ray.energy,
+                            None,
+                        )
 
                     reflection_direction = hit_location - mirrored_source
                     reflection_direction /= lin.norm(reflection_direction)
-                    current_ray = Ray(hit_location, reflection_direction, current_ray.energy)
+                    current_ray = Ray(
+                        hit_location, reflection_direction, current_ray.energy
+                    )
                     current_order += 1
-    
+
         return paths
