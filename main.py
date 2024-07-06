@@ -10,7 +10,7 @@ def main():
     target_face = 5
     target_position = Target.generate_random_coordinates()
     target = Target(target_position, 0.1)
-    reflections_order = 10
+    reflections_order = 2
     reflection_coefficient = 1.0
 
 
@@ -23,7 +23,7 @@ def main():
         print(f"\nPaths with {order} reflections:")
         for path in paths:
             travel_time = path.calculate_travel_time()
-            energy_loss = path.calculate_energy_loss()
+            energy_loss = path.calculate_energy_loss_of_all() 
             print(f"  Travel time: {travel_time:.6f} seconds")
             print(f"  Energy remaining: {energy_loss:.6f}")
 

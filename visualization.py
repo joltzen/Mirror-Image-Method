@@ -129,7 +129,7 @@ class MeshVisualizer:
                 print(f"Travel time for order {order}: {travel_time:.6f} seconds")
                 print(f"Energy loss for order {order}: {energy_loss:.6f}")
                 print("=" * 80)
-                for ray_info in path.rays:
+                for ray_info in path.travelPath:
                     self.print_ray_info(ray_info)
                     self.plot_ray(ax, ray_info, order_colors[order % len(order_colors)], hit_colors[order % len(hit_colors)])
 
@@ -141,7 +141,6 @@ class MeshVisualizer:
         origin = ray_info["origin"]
         reflection_point = ray_info["reflection_point"]
         hit_location = ray_info["hit_location"]
-        print(f"Hit Location: {hit_location}")
         if hit_location is not None:
             ax.plot([origin[0], hit_location[0]], [origin[1], hit_location[1]], [origin[2], hit_location[2]], color=color)
         else:

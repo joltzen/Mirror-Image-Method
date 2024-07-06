@@ -76,7 +76,7 @@ class Target:
         return np.array([x, y, z])
 class SoundPath:
     def __init__(self):
-        self.rays = []
+        self.travelPath = []
 
     def add_ray(self, origin, direction, reflection_point=None, order=0, face_index=None, energy=1.0, hit_location=None):
         """Add a ray to the path."""
@@ -84,12 +84,12 @@ class SoundPath:
 
         if reflection_point is not None:
             distance = lin.norm(origin - reflection_point)
-        else:
-            distance = 0
+        if hit_location is not None:
+            distance = lin.norm(origin - hit_location)
 
         ray = Ray(origin, direction, energy)
         ray.apply_energy_loss(distance)
-        self.rays.append({
+        self.travelPath.append({
             "origin": origin,
             "direction": direction,
             "reflection_point": reflection_point,
@@ -99,22 +99,28 @@ class SoundPath:
             "energy": ray.energy,
             "energy_loss":  ray.energy_loss,
             "hit_location": hit_location
-           
         })
 
     def calculate_travel_time(self, speed_of_sound=343.0):
         """Calculate the total travel time of the path."""
         total_distance = 0.0
-        for ray in self.rays:
+        for ray in self.travelPath:
             if ray["reflection_point"] is not None:
                 total_distance += lin.norm(ray["origin"] - ray["reflection_point"])
         return total_distance / speed_of_sound
     
     def calculate_energy_loss(self):
         """Calculate the total energy loss of the path."""
-        if not self.rays:
+        if not self.travelPath:
             return 0.0
-        return self.rays[-1]["energy_loss"]
-
+        return self.travelPath[-1]["energy_loss"]
+    
+    def calculate_energy_loss_of_all(self):
+        """Calculate the total energy loss of the path."""
+        total_distance = sum(ray["distance"] for ray in self.travelPath if ray["distance"] > 0)
+        if not self.travelPath or total_distance == 0:
+            return 0.0
+        return self.travelPath[0]["energy"] / (total_distance)**2
+    
     def __repr__(self):
-        return f"Path with {len(self.rays)} rays."
+        return f"Path with {len(self.travelPath)} rays."

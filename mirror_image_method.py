@@ -55,7 +55,7 @@ class MirrorImageMethod:
         paths = {i: [] for i in range(self.order + 1)}
 
         while not any(paths.values()):  # Repeat until at least one path hits the target
-            initial_rays = Ray.generate_random_rays(self.source, 100)
+            initial_rays = Ray.generate_random_rays(self.source, 10000)
 
             for ray in initial_rays:
                 path = SoundPath()
@@ -79,23 +79,10 @@ class MirrorImageMethod:
                             break
                     else:
                         path.add_ray(current_ray.origin, current_ray.direction, hit_location, current_order, face_index, current_ray.energy, None)
+
                     reflection_direction = hit_location - mirrored_source
                     reflection_direction /= lin.norm(reflection_direction)
-                    reflection_locations, reflection_index_triangle = self.shoot_ray(hit_location, reflection_direction)
-
-                    if reflection_locations.size:
-                        current_order += 1
-                        reflection_hit_location = reflection_locations[0]
-                        reglected_face_index = reflection_index_triangle[0]
-                        current_ray = Ray(hit_location, reflection_direction, current_ray.energy)
-                        current_ray.reflect(self.reflection_coefficient)
-                        current_ray.apply_energy_loss(lin.norm(hit_location - reflection_hit_location))
-                        if self.target.is_hitted_by_ray(current_ray):
-                            if np.dot(current_ray.direction, self.target.position - current_ray.origin) > 0:
-                                self.target.set_hit_location(current_ray)
-                                path.add_ray(current_ray.origin, current_ray.direction, hit_location, current_order, face_index, current_ray.energy, current_ray.hit_location)
-                                paths[current_order].append(path)
-                                break
-                        else:
-                            path.add_ray(current_ray.origin, current_ray.direction, reflection_hit_location, current_order, reglected_face_index, current_ray.energy, None)
+                    current_ray = Ray(hit_location, reflection_direction, current_ray.energy)
+                    current_order += 1
+    
         return paths
