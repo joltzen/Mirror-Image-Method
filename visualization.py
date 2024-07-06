@@ -124,7 +124,7 @@ class MeshVisualizer:
         for order, paths in paths_dict.items():
             for path in paths:
                 travel_time = path.calculate_travel_time()
-                energy_loss = path.calculate_energy_loss()
+                energy_loss = path.calculate_energy_loss_of_all()
                 print("=" * 80)
                 print(f"Travel time for order {order}: {travel_time:.6f} seconds")
                 print(f"Energy loss for order {order}: {energy_loss:.6f}")
