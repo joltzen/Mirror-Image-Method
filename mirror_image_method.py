@@ -69,7 +69,8 @@ class MirrorImageMethod:
                     hit_location = locations[0]
                     face_index = index_triangle[0]
                     mirrored_source, _ = self.image_sources[index_triangle[0]]
-                    path.add_ray(current_ray.origin, current_ray.direction, hit_location, current_order, face_index, current_ray.energy)
+                    self.target.set_hit_location(current_ray)
+                    path.add_ray(current_ray.origin, current_ray.direction, hit_location, current_order, face_index, current_ray.energy, current_ray.hit_location)
 
                     if self.target.is_hitted_by_ray(current_ray):
                         if np.dot(current_ray.direction, self.target.position - current_ray.origin) >= 0:
@@ -86,7 +87,8 @@ class MirrorImageMethod:
                         current_ray = Ray(hit_location, reflection_direction, current_ray.energy)
                         current_ray.reflect(self.reflection_coefficient)
                         current_ray.apply_energy_loss(lin.norm(hit_location - reflection_hit_location))
-                        path.add_ray(current_ray.origin, current_ray.direction, reflection_hit_location, current_order, reglected_face_index, current_ray.energy)
+                        self.target.set_hit_location(current_ray)
+                        path.add_ray(current_ray.origin, current_ray.direction, reflection_hit_location, current_order, reglected_face_index, current_ray.energy, current_ray.hit_location)
 
                         if self.target.is_hitted_by_ray(current_ray):
                             if np.dot(current_ray.direction, self.target.position - current_ray.origin) >= 0:
