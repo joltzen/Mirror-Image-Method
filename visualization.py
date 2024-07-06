@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
-from utils import Ray, Target
+from utils import Target
 import matplotlib.cm as cm
 
 class MeshVisualizer:
@@ -25,7 +25,8 @@ class MeshVisualizer:
         # plot the faces with their index
         #self.identify_faces(ax)
         self.plot_target(ax)
-        ax.set_axis_off()
+
+        #ax.set_axis_off()
         plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
         ax.set_title("3D Points Plot")
         plt.show()
@@ -103,6 +104,13 @@ class MeshVisualizer:
         ax.quiver(origin[0], origin[1], origin[2], vector[0], vector[1], vector[2], color=color, alpha=0.3)
         ax.text(origin[0] + vector[0]/2, origin[1] + vector[1]/2, origin[2] + vector[2]/2, label, color=color)
 
+    def plot_target(self, ax):
+        u, v = np.mgrid[0:2*np.pi:100j, 0:np.pi:50j]
+        x = self.room.target.position[0] + (self.room.target.radius) * np.cos(u) * np.sin(v)
+        y = self.room.target.position[1] + (self.room.target.radius) * np.sin(u) * np.sin(v)
+        z = self.room.target.position[2] + (self.room.target.radius) * np.cos(v)
+        ax.plot_surface(x, y, z, color="blue", alpha=0.1)
+
     def plot_reflections(self, ax):
         """Plot reflection paths."""
         paths_dict = self.room.paths
@@ -115,54 +123,31 @@ class MeshVisualizer:
 
         for order, paths in paths_dict.items():
             for path in paths:
-                travel_time = path.calculate_travel_time()
-                energy_loss = path.calculate_energy_loss()
+                travel_time = path.calculate_total_travel_time()
+                energy_loss = path.calculate_energy_loss_of_all()
                 print("=" * 80)
                 print(f"Travel time for order {order}: {travel_time:.6f} seconds")
                 print(f"Energy loss for order {order}: {energy_loss:.6f}")
                 print("=" * 80)
-                for ray_info in path.rays:
+                for ray_info in path.travelPath:
                     self.print_ray_info(ray_info)
                     self.plot_ray(ax, ray_info, order_colors[order % len(order_colors)], hit_colors[order % len(hit_colors)])
 
-        if any(paths_dict.values()):
-            print("hello")
-            #self.plot_target 
-        else:
+        if not any(paths_dict.values()):
             print("No rays hit the target.")
 
-    def plot_target(self, ax):
-        u, v = np.mgrid[0:2*np.pi:100j, 0:np.pi:50j]
-        x = self.room.target.position[0] + (self.room.target.radius/2) * np.cos(u) * np.sin(v)
-        y = self.room.target.position[1] + (self.room.target.radius/2) * np.sin(u) * np.sin(v)
-        z = self.room.target.position[2] + (self.room.target.radius/2) * np.cos(v)
-        ax.plot_surface(x, y, z, color="blue", alpha=0.1)
-
     def plot_ray(self, ax, ray_info, color, hit_color):
-        """Plot individual rays as lines."""
+        """Plot individual rays."""
         origin = ray_info["origin"]
         reflection_point = ray_info["reflection_point"]
-
-        if reflection_point is not None:
-            ax.plot([origin[0], reflection_point[0]], [origin[1], reflection_point[1]], [origin[2], reflection_point[2]], color=color)
-            ax.scatter(reflection_point[0], reflection_point[1], reflection_point[2], c=hit_color)
-            print(f"Ray reflected at {reflection_point}")
+        hit_location = ray_info["hit_location"]
+        if hit_location is not None:
+            ax.plot([origin[0], hit_location[0]], [origin[1], hit_location[1]], [origin[2], hit_location[2]], color=color)
         else:
-            print(f"No reflection point for ray from {origin}")
+            ax.scatter(reflection_point[0], reflection_point[1], reflection_point[2], c=hit_color)
+            ax.plot([origin[0], reflection_point[0]], [origin[1], reflection_point[1]], [origin[2], reflection_point[2]], color=color)
 
-        target = self.room.target
-        ray = Ray(origin, ray_info["direction"], ray_info["energy"])
-
-        if target.is_hitted_by_ray(ray):
-            target_hit_point = target.position
-            print(f"Ray hits the target at: {target_hit_point}")
-            ax.plot([origin[0], target_hit_point[0]], [origin[1], target_hit_point[1]], [origin[2], target_hit_point[2]], color=color)
-            
-    
-    
-    
-
-            
+  
     def print_ray_info(self, ray_info):
         """Print ray information."""
         origin = ray_info["origin"]
@@ -172,6 +157,7 @@ class MeshVisualizer:
         face_index = ray_info["face_index"]
         distance = ray_info["distance"]
         energy = ray_info["energy"]
+        hit_location = ray_info["hit_location"]
 
         print(f"Ray Info (Order {order}):")
         print(f"  Origin:         {origin}")
@@ -179,6 +165,7 @@ class MeshVisualizer:
         print(f"  Face Index:     {face_index}")
         print(f"  Distance:       {distance}")
         print(f"  Energy:         {energy}")
+        print(f"  Hit Location:   {hit_location}")
         print(f"  Reflection Point: {reflection_point if reflection_point is not None else 'None'}")
 
         print("-" * 40)
