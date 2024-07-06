@@ -53,10 +53,15 @@ class Target:
         #Verbindung zwischen Startpunkt Ray und Zentrum der Kugel
         a = self.position - ray.origin
         u = np.dot(a, ray.direction) / np.dot(ray.direction, ray.direction)
+        if u < 0:
+            return False
         p = ray.origin + u * ray.direction
         d = self.position - p
 
-        return lin.norm(d) <= self.radius
+        hit = lin.norm(d) <= self.radius
+        if hit:
+            print(f"Ray from {ray.origin} in direction {ray.direction} hits the target at {self.position}")
+        return hit
 
     def generate_random_coordinates():
         """Generate random coordinates in a unit cube."""
