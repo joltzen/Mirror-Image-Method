@@ -26,7 +26,7 @@ class MeshVisualizer:
         #self.identify_faces(ax)
         self.plot_target(ax)
 
-        ax.set_axis_off()
+        #ax.set_axis_off()
         plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
         ax.set_title("3D Points Plot")
         plt.show()
@@ -123,7 +123,7 @@ class MeshVisualizer:
 
         for order, paths in paths_dict.items():
             for path in paths:
-                travel_time = path.calculate_travel_time()
+                travel_time = path.calculate_total_travel_time()
                 energy_loss = path.calculate_energy_loss_of_all()
                 print("=" * 80)
                 print(f"Travel time for order {order}: {travel_time:.6f} seconds")

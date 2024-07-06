@@ -55,7 +55,7 @@ class MirrorImageMethod:
         paths = {i: [] for i in range(self.order + 1)}
 
         while not any(paths.values()):  # Repeat until at least one path hits the target
-            initial_rays = Ray.generate_random_rays(self.source, 10000)
+            initial_rays = Ray.generate_random_rays(self.source, 1000)
 
             for ray in initial_rays:
                 path = SoundPath()

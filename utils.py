@@ -109,6 +109,13 @@ class SoundPath:
                 total_distance += lin.norm(ray["origin"] - ray["reflection_point"])
         return total_distance / speed_of_sound
     
+    def calculate_total_travel_time(self, speed_of_sound=343.0):
+        """Calculate the total travel time of the path."""
+        total_distance = sum(ray["distance"] for ray in self.travelPath if ray["distance"] > 0)
+        if not self.travelPath or total_distance == 0:
+            return 0.0
+        return total_distance / speed_of_sound
+    
     def calculate_energy_loss(self):
         """Calculate the total energy loss of the path."""
         if not self.travelPath:

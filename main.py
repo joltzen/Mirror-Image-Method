@@ -29,17 +29,19 @@ def main():
         print(f"\nPaths with {order} reflections:")
         for path in paths:
             if order == 0:
-                direct_time.append(path.calculate_travel_time())
+                direct_time.append(path.calculate_total_travel_time())
                 direct_energy.append(path.calculate_energy_loss_of_all())
                 continue
-            early_time.append(path.calculate_travel_time())
+            early_time.append(path.calculate_total_travel_time())
             early_energy.append(path.calculate_energy_loss_of_all())
 
     plt.figure()
-
     plt.stem(direct_time, direct_energy,linefmt='b-', markerfmt='bo', basefmt='k-',)
     plt.stem(early_time, early_energy, linefmt='r-', markerfmt='ro', basefmt='k-',)
-
+    plt.xlabel("Time")
+    plt.ylabel("Energy")
+    plt.title("Energy Decay Over Time")
+    plt.grid(True)
     plt.show()
 if __name__ == "__main__":
     main()
