@@ -125,3 +125,39 @@ The project consists of the following main files:
 - **visualization.py**: Contains functions to plot and animate the reflections in the 3D space.
 
 ## Examples
+
+Below are some visual examples of the reflections and ray tracing implemented by the `MirrorImageMethod`.
+
+
+### 1. Face Indices
+<img src="images/FaceIndices.png" alt="Face Indices" width="600"/>
+
+*Figure 1: Identification of face indices in the mesh. Each face of the mesh is labeled with its corresponding index, aiding in debugging and analysis.*
+
+### 2. Mirror Image Method
+<img src="images/MirrorImageMethod.png" alt="Mirror Image Method" width="600"/>
+
+*Figure 2: Illustration of the mirror image method. The plot shows the source, image sources, and the reflection points on the faces of the mesh.*
+
+### 3. Ray Reflections
+<img src="images/RayReflections2.png" alt="Ray Reflections" width="600"/>
+
+*Figure 3: Detailed view of ray reflections. This plot displays the paths of rays, including their reflection points and hit locations on the receiver.*
+
+### 4. Initial 100,000 Reflections
+<img src="images/100000Reflections.png" alt="100000 Reflections" width="600"/>
+
+*Figure 4: Visualization of the initial 100,000 reflections in the room up to the order of 2. The plot shows the complexity and density of the paths traced by the rays.*
+
+### 5. Room Impulse Response
+<img src="images/RoomImpulseResponse.png" alt="Room Impulse Response" width="600"/>
+
+*Figure 5: Room Impulse Response showing the energy of the direct path and early reflections over time.*
+
+### 6. Output Summary
+<img src="images/Output2.png" alt="Output" width="600"/>
+
+*Figure 6: Output summary of the ray tracing simulation. This includes travel times and energy losses for various orders of reflections.*
+
+
+
