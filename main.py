@@ -9,8 +9,8 @@ def main():
     source_point = np.array([0.123, 0.2, 0.113])
     target_face = 5
     target_position = Target.generate_random_coordinates()
-    target = Target(target_position, 0.1)
-    reflections_order = 10
+    target = Target(target_position, 0.3)
+    reflections_order = 2
     reflection_coefficient = 1.0
 
 

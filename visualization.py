@@ -133,9 +133,9 @@ class MeshVisualizer:
 
     def plot_target(self, ax):
         u, v = np.mgrid[0:2*np.pi:100j, 0:np.pi:50j]
-        x = self.room.target.position[0] + (self.room.target.radius/2) * np.cos(u) * np.sin(v)
-        y = self.room.target.position[1] + (self.room.target.radius/2) * np.sin(u) * np.sin(v)
-        z = self.room.target.position[2] + (self.room.target.radius/2) * np.cos(v)
+        x = self.room.target.position[0] + (self.room.target.radius) * np.cos(u) * np.sin(v)
+        y = self.room.target.position[1] + (self.room.target.radius) * np.sin(u) * np.sin(v)
+        z = self.room.target.position[2] + (self.room.target.radius) * np.cos(v)
         ax.plot_surface(x, y, z, color="blue", alpha=0.1)
 
     def plot_ray(self, ax, ray_info, color, hit_color):
@@ -153,14 +153,12 @@ class MeshVisualizer:
         target = self.room.target
         ray = Ray(origin, ray_info["direction"], ray_info["energy"])
 
-        if target.is_hitted_by_ray(ray):
-            target_hit_point = target.position
-            print(f"Ray hits the target at: {target_hit_point}")
-            ax.plot([origin[0], target_hit_point[0]], [origin[1], target_hit_point[1]], [origin[2], target_hit_point[2]], color=color)
+        # if target.is_hitted_by_ray(ray):
+        #     target_hit_point = target.position
+        #     print(f"Ray hits the target at: {target_hit_point}")
+        #     ax.plot([origin[0], target_hit_point[0]], [origin[1], target_hit_point[1]], [origin[2], target_hit_point[2]], color=color)
             
-    
-    
-    
+
 
             
     def print_ray_info(self, ray_info):
