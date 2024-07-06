@@ -71,7 +71,7 @@ class MirrorImageMethod:
                     mirrored_source, _ = self.image_sources[index_triangle[0]]
                     path.add_ray(current_ray.origin, current_ray.direction, hit_location, current_order, face_index, current_ray.energy)
 
-                    if self.target.is_hitted_by_ray(current_ray, hit_location):
+                    if self.target.is_hitted_by_ray(current_ray):
                         if np.dot(current_ray.direction, self.target.position - current_ray.origin) > 0:
                             paths[current_order].append(path)
                             print(f"Path hits target at order {current_order}")
@@ -85,11 +85,11 @@ class MirrorImageMethod:
                         reflection_hit_location = reflection_locations[0]
                         reflected_face_index = reflection_index_triangle[0]
                         current_ray = Ray(hit_location, reflection_direction, current_ray.energy)
-                        #current_ray.reflect(self.reflection_coefficient)
+                        current_ray.reflect(self.reflection_coefficient)
                         current_ray.apply_energy_loss(lin.norm(hit_location - reflection_hit_location))
                         path.add_ray(current_ray.origin, current_ray.direction, reflection_hit_location, current_order, reflected_face_index, current_ray.energy)
 
-                        if self.target.is_hitted_by_ray(current_ray, reflection_hit_location):
+                        if self.target.is_hitted_by_ray(current_ray):
                             if np.dot(current_ray.direction, self.target.position - current_ray.origin) > 0:
                                 paths[current_order].append(path)
                                 print(f"Path hits target at order {current_order} after reflection")

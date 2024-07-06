@@ -6,6 +6,7 @@ class Ray:
         self.origin = origin
         self.direction = direction / lin.norm(direction)
         self.energy = energy
+        self.energy_loss = 0.0
 
     #Powered by ChatGPT
     def generate_rays(n):
@@ -47,19 +48,19 @@ class Target:
         self.position = position
         self.radius = radius
 
-    def is_hitted_by_ray(self, ray: Ray, hitLocation):
+    def is_hitted_by_ray(self, ray: Ray):
         """Check if a ray hits the target."""
         #Verbindung zwischen Startpunkt Ray und Zentrum der Kugel
-        u = hitLocation - ray.origin
-        v = self.position - ray.origin
-
-        v_proj_on_u = (np.dot(u,v)/np.dot(u,u)) * u
-        p = v_proj_on_u + ray.origin
+        a = self.position - ray.origin
+        u = np.dot(a, ray.direction) / np.dot(ray.direction, ray.direction)
+        if u < 0:
+            return False
+        p = ray.origin + u * ray.direction
         d = self.position - p
 
         hit = lin.norm(d) <= self.radius
         if hit:
-            print(f"Ray from {ray.origin} in direction {ray.direction} hits the target at {p}")
+            print(f"Ray from {ray.origin} in direction {ray.direction} hits the target at {self.position}")
         return hit
 
     def generate_random_coordinates():
@@ -68,22 +69,22 @@ class Target:
         y = np.random.uniform(*(0,1))
         z = np.random.uniform(*(0,1))
         return np.array([x, y, z])
-    
 class SoundPath:
     def __init__(self):
-        self.travelPath = []
+        self.rays = []
 
-    def add_ray(self, ray:Ray, reflection_point=None, order=0, face_index=None):
+    def add_ray(self, origin, direction, reflection_point=None, order=0, face_index=None, energy=1.0):
         """Add a ray to the path."""
         if reflection_point is not None:
-            distance = lin.norm(ray.origin - reflection_point)
+            distance = lin.norm(origin - reflection_point)
         else:
             distance = 0
 
+        ray = Ray(origin, direction, energy)
         ray.apply_energy_loss(distance)
         self.rays.append({
-            "origin": ray.origin,
-            "direction": ray.direction,
+            "origin": origin,
+            "direction": direction,
             "reflection_point": reflection_point,
             "order": order, 
             "distance": distance,
