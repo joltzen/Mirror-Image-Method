@@ -70,9 +70,9 @@ class Target:
         ray.hit_location = p
     def generate_random_coordinates():
         """Generate random coordinates in a unit cube."""
-        x = np.random.uniform(*(0,1))
-        y = np.random.uniform(*(0,1))
-        z = np.random.uniform(*(0,1))
+        x = np.random.uniform(*(0,5))
+        y = np.random.uniform(*(0,5))
+        z = np.random.uniform(*(0,5))
         return np.array([x, y, z])
 class SoundPath:
     def __init__(self):
