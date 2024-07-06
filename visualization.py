@@ -141,12 +141,16 @@ class MeshVisualizer:
         origin = ray_info["origin"]
         direction = ray_info["direction"]
         reflection_point = ray_info["reflection_point"]
-        ax.quiver(origin[0], origin[1], origin[2], direction[0], direction[1], direction[2], color=color)
-        ax.plot([origin[0], reflection_point[0]], [origin[1], reflection_point[1]], [origin[2], reflection_point[2]], color=color)
+        hit_location = ray_info["hit_location"]
+        print(f"Hit Location: {hit_location}")
+        #ax.quiver(origin[0], origin[1], origin[2], direction[0], direction[1], direction[2], color=color)
         if reflection_point is not None:
             ax.scatter(reflection_point[0], reflection_point[1], reflection_point[2], c=hit_color)
+        if hit_location is not None:
+            ax.plot([origin[0], hit_location[0]], [origin[1], hit_location[1]], [origin[2], hit_location[2]], color=color)
+        else:
+            ax.plot([origin[0], reflection_point[0]], [origin[1], reflection_point[1]], [origin[2], reflection_point[2]], color=color)
 
-            
     def print_ray_info(self, ray_info):
         """Print ray information."""
         origin = ray_info["origin"]

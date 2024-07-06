@@ -55,12 +55,19 @@ class Target:
         a = self.position - ray.origin
         u = np.dot(a, ray.direction) / np.dot(ray.direction, ray.direction)
         p = ray.origin + u * ray.direction
+        
         d = self.position - p
         hit = lin.norm(d) <= self.radius
         if hit:
             ray.hit_location = p
         return hit
-
+    
+    def set_hit_location(self, ray: Ray):
+        """Set the hit location of the ray on the target."""
+        a = self.position - ray.origin
+        u = np.dot(a, ray.direction) / np.dot(ray.direction, ray.direction)
+        p = ray.origin + u * ray.direction
+        ray.hit_location = p
     def generate_random_coordinates():
         """Generate random coordinates in a unit cube."""
         x = np.random.uniform(*(0,1))
@@ -71,7 +78,7 @@ class SoundPath:
     def __init__(self):
         self.rays = []
 
-    def add_ray(self, origin, direction, reflection_point=None, order=0, face_index=None, energy=1.0):
+    def add_ray(self, origin, direction, reflection_point=None, order=0, face_index=None, energy=1.0, hit_location=None):
         """Add a ray to the path."""
         direction = direction / lin.norm(direction) 
 
@@ -90,7 +97,8 @@ class SoundPath:
             "distance": distance,
             "face_index": face_index,
             "energy": ray.energy,
-            "energy_loss":  ray.energy_loss
+            "energy_loss":  ray.energy_loss,
+            "hit_location": hit_location
            
         })
 
