@@ -2,6 +2,7 @@ import numpy as np
 from mirror_image_method import MirrorImageMethod
 from visualization import MeshVisualizer
 from utils import Target
+import matplotlib.pyplot as plt
 
 
 def main():
@@ -19,15 +20,27 @@ def main():
 
     visualizer.plot_mesh()
 
+    early_energy = []
+    early_time = []
+    direct_energy = []
+    direct_time =[]
+
     for order, paths in room.paths.items():
         print(f"\nPaths with {order} reflections:")
         for path in paths:
-            travel_time = path.calculate_travel_time()
-            energy_loss = path.calculate_energy_loss_of_all() 
-            print(f"  Travel time: {travel_time:.6f} seconds")
-            print(f"  Energy remaining: {energy_loss:.6f}")
+            if order == 0:
+                direct_time.append(path.calculate_travel_time())
+                direct_energy.append(path.calculate_energy_loss_of_all())
+                continue
+            early_time.append(path.calculate_travel_time())
+            early_energy.append(path.calculate_energy_loss_of_all())
 
+    plt.figure()
 
+    plt.stem(direct_time, direct_energy,linefmt='b-', markerfmt='bo', basefmt='k-',)
+    plt.stem(early_time, early_energy, linefmt='r-', markerfmt='ro', basefmt='k-',)
+
+    plt.show()
 if __name__ == "__main__":
     main()
     
