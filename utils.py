@@ -7,6 +7,7 @@ class Ray:
         self.direction = direction / lin.norm(direction)
         self.energy = energy
         self.energy_loss = 0.0
+        self.hit_location = None
 
     #Powered by ChatGPT
     def generate_rays(n):
@@ -55,8 +56,10 @@ class Target:
         u = np.dot(a, ray.direction) / np.dot(ray.direction, ray.direction)
         p = ray.origin + u * ray.direction
         d = self.position - p
-
-        return lin.norm(d) <= self.radius
+        hit = lin.norm(d) <= self.radius
+        if hit:
+            ray.hit_location = p
+        return hit
 
     def generate_random_coordinates():
         """Generate random coordinates in a unit cube."""
@@ -70,6 +73,8 @@ class SoundPath:
 
     def add_ray(self, origin, direction, reflection_point=None, order=0, face_index=None, energy=1.0):
         """Add a ray to the path."""
+        direction = direction / lin.norm(direction) 
+
         if reflection_point is not None:
             distance = lin.norm(origin - reflection_point)
         else:

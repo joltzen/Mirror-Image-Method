@@ -55,7 +55,7 @@ class MirrorImageMethod:
         paths = {i: [] for i in range(self.order + 1)}
 
         while not any(paths.values()):  # Repeat until at least one path hits the target
-            initial_rays = Ray.generate_random_rays(self.source, 1000)
+            initial_rays = Ray.generate_random_rays(self.source, 100)
 
             for ray in initial_rays:
                 path = SoundPath()
@@ -72,7 +72,7 @@ class MirrorImageMethod:
                     path.add_ray(current_ray.origin, current_ray.direction, hit_location, current_order, face_index, current_ray.energy)
 
                     if self.target.is_hitted_by_ray(current_ray):
-                        if np.dot(current_ray.direction, self.target.position - current_ray.origin) > 0:
+                        if np.dot(current_ray.direction, self.target.position - current_ray.origin) >= 0:
                             paths[current_order].append(path)
                             break
                     reflection_direction = hit_location - mirrored_source
@@ -89,7 +89,7 @@ class MirrorImageMethod:
                         path.add_ray(current_ray.origin, current_ray.direction, reflection_hit_location, current_order, reglected_face_index, current_ray.energy)
 
                         if self.target.is_hitted_by_ray(current_ray):
-                            if np.dot(current_ray.direction, self.target.position - current_ray.origin) > 0:
+                            if np.dot(current_ray.direction, self.target.position - current_ray.origin) >= 0:
                                 paths[current_order].append(path)
                                 break
 
