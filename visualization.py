@@ -139,18 +139,16 @@ class MeshVisualizer:
     def plot_ray(self, ax, ray_info, color, hit_color):
         """Plot individual rays."""
         origin = ray_info["origin"]
-        direction = ray_info["direction"]
         reflection_point = ray_info["reflection_point"]
         hit_location = ray_info["hit_location"]
         print(f"Hit Location: {hit_location}")
-        #ax.quiver(origin[0], origin[1], origin[2], direction[0], direction[1], direction[2], color=color)
-        if reflection_point is not None:
-            ax.scatter(reflection_point[0], reflection_point[1], reflection_point[2], c=hit_color)
         if hit_location is not None:
             ax.plot([origin[0], hit_location[0]], [origin[1], hit_location[1]], [origin[2], hit_location[2]], color=color)
         else:
+            ax.scatter(reflection_point[0], reflection_point[1], reflection_point[2], c=hit_color)
             ax.plot([origin[0], reflection_point[0]], [origin[1], reflection_point[1]], [origin[2], reflection_point[2]], color=color)
 
+  
     def print_ray_info(self, ray_info):
         """Print ray information."""
         origin = ray_info["origin"]
@@ -160,6 +158,7 @@ class MeshVisualizer:
         face_index = ray_info["face_index"]
         distance = ray_info["distance"]
         energy = ray_info["energy"]
+        hit_location = ray_info["hit_location"]
 
         print(f"Ray Info (Order {order}):")
         print(f"  Origin:         {origin}")
@@ -167,6 +166,7 @@ class MeshVisualizer:
         print(f"  Face Index:     {face_index}")
         print(f"  Distance:       {distance}")
         print(f"  Energy:         {energy}")
+        print(f"  Hit Location:   {hit_location}")
         print(f"  Reflection Point: {reflection_point if reflection_point is not None else 'None'}")
 
         print("-" * 40)

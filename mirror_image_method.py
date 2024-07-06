@@ -69,13 +69,16 @@ class MirrorImageMethod:
                     hit_location = locations[0]
                     face_index = index_triangle[0]
                     mirrored_source, _ = self.image_sources[index_triangle[0]]
-                    self.target.set_hit_location(current_ray)
-                    path.add_ray(current_ray.origin, current_ray.direction, hit_location, current_order, face_index, current_ray.energy, current_ray.hit_location)
+                    
 
                     if self.target.is_hitted_by_ray(current_ray):
-                        if np.dot(current_ray.direction, self.target.position - current_ray.origin) >= 0:
+                        if np.dot(current_ray.direction, self.target.position - current_ray.origin) > 0:
+                            self.target.set_hit_location(current_ray)
+                            path.add_ray(current_ray.origin, current_ray.direction, hit_location, current_order, face_index, current_ray.energy, current_ray.hit_location)
                             paths[current_order].append(path)
                             break
+                    else:
+                        path.add_ray(current_ray.origin, current_ray.direction, hit_location, current_order, face_index, current_ray.energy, None)
                     reflection_direction = hit_location - mirrored_source
                     reflection_direction /= lin.norm(reflection_direction)
                     reflection_locations, reflection_index_triangle = self.shoot_ray(hit_location, reflection_direction)
@@ -87,12 +90,12 @@ class MirrorImageMethod:
                         current_ray = Ray(hit_location, reflection_direction, current_ray.energy)
                         current_ray.reflect(self.reflection_coefficient)
                         current_ray.apply_energy_loss(lin.norm(hit_location - reflection_hit_location))
-                        self.target.set_hit_location(current_ray)
-                        path.add_ray(current_ray.origin, current_ray.direction, reflection_hit_location, current_order, reglected_face_index, current_ray.energy, current_ray.hit_location)
-
                         if self.target.is_hitted_by_ray(current_ray):
-                            if np.dot(current_ray.direction, self.target.position - current_ray.origin) >= 0:
+                            if np.dot(current_ray.direction, self.target.position - current_ray.origin) > 0:
+                                self.target.set_hit_location(current_ray)
+                                path.add_ray(current_ray.origin, current_ray.direction, hit_location, current_order, face_index, current_ray.energy, current_ray.hit_location)
                                 paths[current_order].append(path)
                                 break
-
+                        else:
+                            path.add_ray(current_ray.origin, current_ray.direction, reflection_hit_location, current_order, reglected_face_index, current_ray.energy, None)
         return paths
