@@ -142,7 +142,7 @@ Below are some visual examples of the reflections and ray tracing implemented by
 ### 3. Ray Reflections
 <img src="images/RayReflections2.png" alt="Ray Reflections" width="600"/>
 
-*Figure 3: Detailed view of ray reflections. This plot displays the paths of rays, including their reflection points and hit locations on the receiver.*
+*Figure 3: Detailed view of ray reflections. This plot displays the paths of rays, including their reflection points on the faces and hit locations on the receiver.*
 
 ### 4. Initial 100,000 Reflections
 <img src="images/100000Reflections.png" alt="100000 Reflections" width="600"/>
