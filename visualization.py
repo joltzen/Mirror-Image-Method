@@ -23,10 +23,11 @@ class MeshVisualizer:
             self.plot_highlighted_target_face(ax)
         else:
             self.plot_faces(ax)
+        self.plot_target(ax)
+        self.plot_response()
+
         # plot the faces with their index
         # self.identify_faces(ax)
-        self.plot_target(ax)
-
         ax.set_axis_off()
         plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
         ax.set_title("3D Points Plot")
@@ -158,6 +159,7 @@ class MeshVisualizer:
         )
 
     def plot_target(self, ax):
+        """Plot the target."""
         u, v = np.mgrid[0 : 2 * np.pi : 100j, 0 : np.pi : 50j]
         x = self.room.target.position[0] + (self.room.target.radius) * np.cos(
             u
@@ -247,3 +249,44 @@ class MeshVisualizer:
         )
 
         print("-" * 40)
+
+    def plot_response(self):
+        """Plot the Room Impulse Response."""
+        early_energy = []
+        early_time = []
+        direct_energy = []
+        direct_time = []
+
+        for order, paths in self.room.paths.items():
+            print(f"\nPaths with {order} reflections: {len(paths)}")
+            for path in paths:
+                if order == 0:
+                    direct_time.append(path.calculate_total_travel_time())
+                    direct_energy.append(path.calculate_energy_loss_of_all())
+                    continue
+                early_time.append(path.calculate_total_travel_time())
+                early_energy.append(path.calculate_energy_loss_of_all())
+
+        plt.figure()
+        plt.stem(
+            direct_time,
+            direct_energy,
+            linefmt="b-",
+            markerfmt="bo",
+            basefmt="k-",
+            label="Direct Path",
+        )
+        plt.stem(
+            early_time,
+            early_energy,
+            linefmt="r-",
+            markerfmt="ro",
+            basefmt="k-",
+            label="Early Reflections",
+        )
+        plt.xlabel("Time")
+        plt.ylabel("Energy")
+        plt.title("Room Impulse Response")
+        plt.grid(True)
+        plt.legend(loc="upper right")
+        

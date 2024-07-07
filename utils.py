@@ -2,6 +2,7 @@ import numpy.linalg as lin
 import numpy as np
 
 class Ray:
+    """A ray object that can be shot from a source."""
     def __init__(self, origin, direction, energy=1.0):
         self.origin = origin
         self.direction = direction / lin.norm(direction)
@@ -44,6 +45,7 @@ class Ray:
             self.energy_loss = self.energy / (distance)**2
 
 class Target:
+    """A target object that can be hit by a ray."""
     def __init__(self, position, radius: float):
         
         self.position = position
@@ -75,6 +77,7 @@ class Target:
         z = np.random.uniform(*(0,5))
         return np.array([x, y, z])
 class SoundPath:
+    """A path of sound rays."""
     def __init__(self):
         self.travelPath = []
 

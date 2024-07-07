@@ -12,6 +12,7 @@ class MirrorImageMethod:
         target: Target,
         order: int,
         reflection_coefficient: float,
+        initial_rays: int,
     ):
         self.mesh = trimesh.load_mesh(file_path)
         self.source = source
@@ -19,7 +20,9 @@ class MirrorImageMethod:
         self.target = target
         self.reflection_coefficient = reflection_coefficient
         self.image_sources = self.find_image_sources(source, order, current_order=order)
+        self.initial_rays = initial_rays
         self.paths = self.calculate_paths()
+        
 
     def calculate_normal(self, face):
         """Calculate the normal of a face."""
@@ -67,7 +70,7 @@ class MirrorImageMethod:
         paths = {i: [] for i in range(self.order + 1)}
 
         while not any(paths.values()):  # Repeat until at least one path hits the target
-            initial_rays = Ray.generate_random_rays(self.source, 10000)
+            initial_rays = Ray.generate_random_rays(self.source, self.initial_rays)
 
             for ray in initial_rays:
                 path = SoundPath()
