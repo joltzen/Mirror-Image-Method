@@ -268,22 +268,24 @@ class MeshVisualizer:
                 early_energy.append(path.calculate_energy_loss_of_all())
 
         plt.figure()
-        plt.stem(
-            direct_time,
-            direct_energy,
-            linefmt="b-",
-            markerfmt="bo",
-            basefmt="k-",
-            label="Direct Path",
-        )
-        plt.stem(
-            early_time,
-            early_energy,
-            linefmt="r-",
-            markerfmt="ro",
-            basefmt="k-",
-            label="Early Reflections",
-        )
+        if direct_energy and direct_time:
+            plt.stem(
+                direct_time,
+                direct_energy,
+                linefmt="b-",
+                markerfmt="bo",
+                basefmt="k-",
+                label="Direct Path",
+            )
+        if early_energy and early_time:
+            plt.stem(
+                early_time,
+                early_energy,
+                linefmt="r-",
+                markerfmt="ro",
+                basefmt="k-",
+                label="Early Reflections",
+            )
         plt.xlabel("Time")
         plt.ylabel("Energy")
         plt.title("Room Impulse Response")
