@@ -14,6 +14,10 @@ class MeshVisualizer:
         """Plot the mesh."""
         fig = plt.figure()
         ax = fig.add_subplot(111, projection="3d")
+
+        #Auskommentieren wenn Rechteck als Mesh verwendet wird
+        #ax.set_box_aspect([5, 2, 2])
+
         ax.set_box_aspect([1, 1, 1])
 
         self.plot_vertices(ax)
@@ -168,7 +172,7 @@ class MeshVisualizer:
             u
         ) * np.sin(v)
         z = self.room.target.position[2] + (self.room.target.radius) * np.cos(v)
-        ax.plot_surface(x, y, z, color="blue", alpha=0.1)
+        ax.plot_surface(x, y, z, color="blue", alpha=1)
 
     def plot_reflections(self, ax):
         """Plot reflection paths."""

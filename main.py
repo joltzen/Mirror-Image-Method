@@ -15,9 +15,14 @@ def main():
     # Target point of the sound 
     target_face = 5
 
+    #Auskommentieren wenn Rechteck als Mesh verwendet wird
+    """ target_position = np.array([3, 0, 0])
+    target_radius = 0.1 """
+
     # Generate a target Object with random coordinates and radius that will be hit by the sound
     target_position = Target.generate_random_coordinates()
     target_radius = 0.5
+
     target = Target(target_position, target_radius)
 
     # Reflection order and reflection coefficient
